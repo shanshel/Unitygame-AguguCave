@@ -12,10 +12,19 @@ public class PlayerController : MonoBehaviour
     Vector3 shadowTraget, playerTarget; // Target to follow
     Vector3 ShadowtargetLastPos, pTargetLastPos;
     Tweener Shadowtween, playerTweeen;
+
+    float lastAngle = 90f;
+    float lastScale = 1;
+    public float scaleStep = .2f;
+    private float maxScale;
     private void Start()
     {
+        maxScale = 1 + (scaleStep * 3);
         playerTarget = transform.position;
-        playerTweeen = transform.DOMove(playerTarget, 0.3f).SetAutoKill(false);
+
+        //Ease.OutElastic
+        playerTweeen = transform.DOMove(playerTarget, 0.3f).SetAutoKill(false).SetEase(Ease.OutElastic, .5f);
+
         pTargetLastPos = playerTarget;
         shadowTraget = new Vector3(transform.position.x, transform.position.y, playerShadow.transform.position.z);
         Shadowtween = playerShadow.transform.DOMove(shadowTraget, 1).SetAutoKill(false);
@@ -26,6 +35,8 @@ public class PlayerController : MonoBehaviour
 
         ShadowMovemeent();
         movement();
+        rotation();
+        scaleListen();
     }
 
     void ShadowMovemeent()
@@ -35,6 +46,36 @@ public class PlayerController : MonoBehaviour
         // Add a Restart in the end, so that if the tween was completed it will play again
         Shadowtween.ChangeEndValue(shadowTraget, true).Restart();
         ShadowtargetLastPos = shadowTraget;
+    }
+
+    void rotation()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+            transform.DORotateQuaternion(Quaternion.Euler(0, 0, lastAngle), .3f).SetEase(Ease.OutElastic);
+            if (lastAngle + 90f >= 360)
+                lastAngle = 0f;
+            else
+                lastAngle = lastAngle + 90f;
+        }
+    }
+
+    void scaleListen()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+
+            lastScale += scaleStep;
+     
+            if (lastScale >= maxScale)
+            {
+                lastScale = 1;
+            }
+    
+            transform.DOScale(lastScale, .3f).SetEase(Ease.OutElastic);
+       
+        }
     }
     void movement()
     {
@@ -56,10 +97,7 @@ public class PlayerController : MonoBehaviour
         {
             playerTarget.x -= cubeSize;
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            transform.Rotate(Vector3.forward, 90);
-        }
+    
 
         if (pTargetLastPos == playerTarget) return;
         playerTweeen.ChangeEndValue(playerTarget, true).Restart();
