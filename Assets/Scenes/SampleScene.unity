@@ -1312,41 +1312,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 6.566986
       objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763714, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: f9abeefd87f5ca5448ab881fdb583c1e, type: 2}
-    - target: {fileID: 2535248944281763714, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: m_RenderMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763715, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: ColorModule.enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763715, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: UVModule.enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763715, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: UVModule.uvChannelMask
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763715, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: looping
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2535248944281763715, guid: ee6acab375201ff4fa715b771d5b14a4,
-        type: 3}
-      propertyPath: UVModule.mode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2535248944281763725, guid: ee6acab375201ff4fa715b771d5b14a4,
         type: 3}
       propertyPath: m_Name
