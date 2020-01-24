@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class spawner : MonoBehaviour
 {
+    private Shake shake;
     public static spawner _inst;
-    public GameObject[] obstclesPattern;
+    public obstacles[] obstclesPattern;
     public GameObject[] playerShapes;
 
-    private float timeBtwSpn;
-    public float StartTimeBtwSpn;
-    public float decreaseTime;
-    public float minTime = 0.65f;
+    public float increaseSpeed;
+    public float maxspeed = 20f;
+    public float startspeed = 5f;
+    private float currentSpeed;
     public List<obstacles> activeObstacles = new List<obstacles>();
 
  
@@ -23,25 +24,16 @@ public class spawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        shake = GameObject.FindGameObjectWithTag("ScreenShake").GetComponent<Shake>();
+        currentSpeed = startspeed;
+
+        Invoke("SpawnObs", 3f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(timeBtwSpn <= 0)
-        {
-            int rand = Random.Range(0, obstclesPattern.Length);
-            Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
-            timeBtwSpn = StartTimeBtwSpn;
-            if (StartTimeBtwSpn > minTime)
-            {
-                StartTimeBtwSpn -= decreaseTime;
-            }
-        }else
-        {
-            timeBtwSpn -= Time.deltaTime;
-        }
+
     }
 
     public Vector3 getCurrentObstaclePosition ()
@@ -51,6 +43,18 @@ public class spawner : MonoBehaviour
         else
             return Vector3.zero;
 
+    }
+    public void SpawnObs()
+    {
+        int rand = Random.Range(0, obstclesPattern.Length);
+        var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
+        shake.spawnObs();
+        obs.speed = currentSpeed;
+        if (currentSpeed < maxspeed)
+        {
+            currentSpeed += increaseSpeed;
+        }
+        
     }
   
 }
