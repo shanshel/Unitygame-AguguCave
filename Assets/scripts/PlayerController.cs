@@ -9,6 +9,10 @@ public class PlayerController : MonoBehaviour
     float cubeSize = .5f;
     [SerializeField]
     GameObject playerShadow;
+
+    [SerializeField]
+    GameObject playerActionEffectPrefab;
+
     Vector3 shadowTraget, playerTarget; // Target to follow
     Vector3 ShadowtargetLastPos, pTargetLastPos;
     Tweener Shadowtween, playerTweeen;
@@ -17,6 +21,7 @@ public class PlayerController : MonoBehaviour
     float lastScale = 1;
     public float scaleStep = .2f;
     private float maxScale;
+    private float playerTimeout = 0f;
     private void Start()
     {
         maxScale = 1 + (scaleStep * 3);
@@ -27,13 +32,20 @@ public class PlayerController : MonoBehaviour
 
         pTargetLastPos = playerTarget;
         shadowTraget = new Vector3(transform.position.x, transform.position.y, playerShadow.transform.position.z);
-        Shadowtween = playerShadow.transform.DOMove(shadowTraget, 1).SetAutoKill(false);
+        Shadowtween = playerShadow.transform.DOMove(shadowTraget, .1f).SetAutoKill(false);
         ShadowtargetLastPos = shadowTraget;
     }
     private void Update()
     {
 
         ShadowMovemeent();
+
+        if (playerTimeout > 0f)
+        {
+            playerTimeout -= Time.deltaTime;
+            return;
+        }
+            
         movement();
         rotation();
         scaleListen();
@@ -44,20 +56,28 @@ public class PlayerController : MonoBehaviour
         shadowTraget = new Vector3(transform.position.x, transform.position.y, spawner._inst.getCurrentObstaclePosition().z - 0.7f);
         if (ShadowtargetLastPos == shadowTraget) return;
         // Add a Restart in the end, so that if the tween was completed it will play again
-        Shadowtween.ChangeEndValue(shadowTraget, true).Restart();
+        var pos = shadowTraget;
+
+        Shadowtween.ChangeEndValue(pos, true).Restart();
         ShadowtargetLastPos = shadowTraget;
     }
 
     void rotation()
     {
+       
         if (Input.GetKeyDown(KeyCode.Space))
         {
+
+            SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
+            Instantiate(playerActionEffectPrefab, transform);
 
             transform.DORotateQuaternion(Quaternion.Euler(0, 0, lastAngle), .3f).SetEase(Ease.OutElastic);
             if (lastAngle + 90f >= 360)
                 lastAngle = 0f;
             else
                 lastAngle = lastAngle + 90f;
+
+            playerTimeout = .1f;
         }
     }
 
@@ -71,10 +91,19 @@ public class PlayerController : MonoBehaviour
             if (lastScale >= maxScale)
             {
                 lastScale = 1;
+                SoundManager._inst.playSFX(EnumsData.SFXEnum.scaleDown);
+
             }
-    
+            else
+            {
+                SoundManager._inst.playSFX(EnumsData.SFXEnum.scaleUp);
+
+            }
+
+            Instantiate(playerActionEffectPrefab, transform);
             transform.DOScale(lastScale, .3f).SetEase(Ease.OutElastic);
-       
+            playerTimeout = .1f;
+
         }
     }
     void movement()
@@ -100,6 +129,10 @@ public class PlayerController : MonoBehaviour
     
 
         if (pTargetLastPos == playerTarget) return;
+        SoundManager._inst.playSFX(EnumsData.SFXEnum.dash);
+        Instantiate(playerActionEffectPrefab, transform);
+
+        playerTimeout = .1f;
         playerTweeen.ChangeEndValue(playerTarget, true).Restart();
         pTargetLastPos = playerTarget;
     }

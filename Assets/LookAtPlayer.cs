@@ -13,7 +13,7 @@ public class LookAtPlayer : MonoBehaviour
     private void Start()
     {
         var obj = objectToLookAt.transform.position;
-        thisTweener = transform.DOLookAt(obj, 2f).SetAutoKill(false);
+        thisTweener = transform.DOLookAt(obj, .4f).SetAutoKill(false);
         lastPos = transform.position;
         targetLastPos = objectToLookAt.transform.position;
     
