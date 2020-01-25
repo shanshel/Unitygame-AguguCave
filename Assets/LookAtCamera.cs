@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class LookAtCamera : MonoBehaviour
 {
-   
-    public ParticleSystem SpeedOn;
-    public static GameManager _inst;
-    public float globalScrollSpeed = 1;
-    private void Awake()
-    {
-        _inst = this;
-    }
+
+    GameObject objectToLookAt;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (objectToLookAt == null)
+            objectToLookAt = Camera.main.gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        transform.LookAt( objectToLookAt.transform.position);
     }
 }

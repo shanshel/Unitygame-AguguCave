@@ -7,7 +7,7 @@ using static EnumsData;
 public class SoundManager : MonoBehaviour
 {
 
-    public AudioClip dashSfx, rotateSfx, scaleUpSfx, scaleDownSfx;
+    public AudioClip dashSfx, rotateSfx, scaleUpSfx, scaleDownSfx, passSfx;
     public static SoundManager _inst;
 
 
@@ -40,6 +40,9 @@ public class SoundManager : MonoBehaviour
             case SFXEnum.rotate:
                 audio = rotateSfx;
                 break;
+            case SFXEnum.pass:
+                audio = passSfx;
+                break;
         }
 
         return audio;
@@ -50,8 +53,26 @@ public class SoundManager : MonoBehaviour
     {
         AudioClip sfxToPlay = getSFX(sfx);
         Doozy.Engine.Soundy.SoundyManager.Play(sfxToPlay);
+
+      
         return sfxToPlay;
     }
+    
+    public void playSFXCorot(SFXEnum sfx, float seconds)
+    {
+        StartCoroutine(playSFXCorotPrivate(sfx, seconds));
+    }
+
+    IEnumerator playSFXCorotPrivate(SFXEnum sfx, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        AudioClip sfxToPlay = getSFX(sfx);
+        Doozy.Engine.Soundy.SoundyManager.Play(sfxToPlay);
+        yield return null;
+    }
+
+
+
 
     IEnumerator stopSFX(AudioSource sfx, float seconds)
     {

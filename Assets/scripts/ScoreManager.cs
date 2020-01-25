@@ -22,7 +22,19 @@ public class ScoreManager : MonoBehaviour
     public void IncreaseScore()
     {
         score++;
+        SoundManager._inst.playSFX(EnumsData.SFXEnum.pass);
+        SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.pass, .15f);
+        SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.pass, .3f);
+        GameManager._inst.globalScrollSpeed = 5f;
+
+        Invoke("resetScrollSpeed", 1f);
         ScoreText.text = score.ToString();
+    }
+
+    void resetScrollSpeed()
+    {
+        GameManager._inst.globalScrollSpeed = 1f;
+
     }
 
 }

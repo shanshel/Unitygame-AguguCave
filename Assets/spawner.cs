@@ -27,14 +27,9 @@ public class spawner : MonoBehaviour
         shake = GameObject.FindGameObjectWithTag("ScreenShake").GetComponent<Shake>();
         currentSpeed = startspeed;
 
-        Invoke("SpawnObs", 3f);
+        
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public Vector3 getCurrentObstaclePosition ()
     {
@@ -46,9 +41,12 @@ public class spawner : MonoBehaviour
     }
     public void SpawnObs()
     {
+       
         int rand = Random.Range(0, obstclesPattern.Length);
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
-        shake.spawnObs();
+        CameraMain._inst.spawnObs();
+
+       
         obs.speed = currentSpeed;
         if (currentSpeed < maxspeed)
         {
