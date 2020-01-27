@@ -8,5 +8,24 @@ public class EnumsData
     {
         dash, rotate, scaleUp, scaleDown, pass, hited
     }
+
+    public enum CubeTypeEnum
+    {
+        
+        topLeftCorner, 
+        TopRightCorner,
+        BottomLeftCorner, 
+        BottomRightCorner, 
+        TopEdge,
+        RightEdge,
+        LeftEdge,
+        BottomEdge,
+        Any
+    }
+
+    public enum FourDirectionEnum
+    {
+        Top, Right, Bottom, Left
+    }
 }
 

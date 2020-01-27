@@ -16,8 +16,8 @@ public class ScrollingEnv : MonoBehaviour
     void Update()
     {
         float step = GameManager._inst.globalScrollSpeed * speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, -100f), step);
-        if (transform.position.z < endAt)
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, endAt), step);
+        if (transform.position.z <= endAt)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, startAt);
         }

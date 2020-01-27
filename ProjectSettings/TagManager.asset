@@ -20,9 +20,9 @@ TagManager:
   - Player
   - Obst
   - IgnoreAnyLight
-  - 
-  - 
-  - 
+  - PostProcess
+  - Monster
+  - Hole
   - 
   - 
   - 

@@ -21,10 +21,14 @@ public class Monster : MonoBehaviour
         Invoke("Attack", 3f);
     }
 
+    public void AttackAfter(float second)
+    {
+        Invoke("Attack", second);
+        Invoke("StopSpeedOnPar", 0.1f);
+    }
     public void Attack()
     {
         _animator.SetTrigger("Attack");
-        Invoke("StopSpeedOnPar", 0.1f);
         StartCoroutine(spawnObstacle());
     }
 
