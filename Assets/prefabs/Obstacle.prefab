@@ -31,6 +31,36 @@ Transform:
   m_Father: {fileID: 3437998121856004051}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1430697284406412489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376943699279398437}
+  m_Layer: 9
+  m_Name: center
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1376943699279398437
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430697284406412489}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: -3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3437998121856004051}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1589351244883431999
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,6 +183,7 @@ Transform:
   m_Children:
   - {fileID: 2840731842763389487}
   - {fileID: 6062648709410987037}
+  - {fileID: 1376943699279398437}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -173,6 +204,7 @@ MonoBehaviour:
   isPassed: 0
   obstacleCube: {fileID: 1336674459628016149, guid: cacb2421c398b764491bcd1cd054055c,
     type: 3}
+  pivoitObject: {fileID: 1430697284406412489}
   cubePerRow: 8
 --- !u!54 &5744796772482274619
 Rigidbody:

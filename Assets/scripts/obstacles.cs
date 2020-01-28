@@ -8,7 +8,7 @@ public class obstacles : MonoBehaviour
     public float speed = 10;
     public ParticleSystem speedon;
     public bool isPassed = false;
-    public GameObject obstacleCube;
+    public GameObject obstacleCube, pivoitObject;
     private GameObject[] cubes = new GameObject[48];
     public int cubePerRow = 8;
 
@@ -72,7 +72,7 @@ public class obstacles : MonoBehaviour
        
         
     
-        PlayerController._inst.setPlayerShape(agreedCubes);
+        PlayerController._inst.setPlayerShape(agreedCubes, pivoitObject);
     }
 
 
