@@ -8,10 +8,11 @@ public class obstacles : MonoBehaviour
     public float speed = 10;
     public ParticleSystem speedon;
     public bool isPassed = false;
-    public GameObject obstacleCube, pivoitObject;
+    public GameObject obstacleCube, pivoitObject, hardContainer;
     private GameObject[] cubes = new GameObject[48];
     public int cubePerRow = 8;
 
+    public int touchCount, touchCountRequired;
     private void Start()
     {
 
@@ -22,7 +23,7 @@ public class obstacles : MonoBehaviour
             pos.x += x - (cubePerRow * round);
             pos.y -= round;
             
-            GameObject cube = Instantiate(obstacleCube, pos, Quaternion.identity, transform);
+            GameObject cube = Instantiate(obstacleCube, pos, Quaternion.identity, hardContainer.transform);
             cubes[x] = cube;
         }
         Invoke("GenerateRandomShape", .2f);
@@ -61,17 +62,16 @@ public class obstacles : MonoBehaviour
                 if (!cubeToDisableIndex.Contains(cubeIndex))
                 {
                     cubeToDisableIndex.Add(cubeIndex);
-                    Debug.Log(cubeIndex);
                     agreedCubes.Add(cubes[cubeIndex]);
                     agreedCubeHoleCount++;
                     cubes[cubeIndex].SetActive(false);
                 }
             }
         }
-       
-       
-        
-    
+
+
+
+        touchCountRequired = agreedCubes.Count;
         PlayerController._inst.setPlayerShape(agreedCubes, pivoitObject);
     }
 
@@ -280,29 +280,27 @@ public class obstacles : MonoBehaviour
     {
         transform.Translate(Vector3.back * speed * Time.deltaTime);
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        
-        if (isPassed) return;
-        
-        if (other.CompareTag("Player"))
-        {
-            SceneManager.LoadScene(1);
-        }
-        if (other.CompareTag("Passenger"))
-        {
-            
-            isPassed = true;
-            speed = 25;
-            spawner._inst.activeObstacles.Remove(this);
-            GameManager._inst.SpeedOn.Play();
-            ScoreManager._inst.IncreaseScore();
-            CameraMain._inst.camShake();
-            Monster._inst.AttackAfter(2f);
-           
 
-        }
-       
+
+    public void obstFail()
+    {
+        if (isPassed) return;
+
+        isPassed = true;
+        SceneManager.LoadScene(1);
+    }
+    public void obstPass()
+    {
+        if (isPassed) return;
+        isPassed = true;
+        speed = 25;
+        spawner._inst.activeObstacles.Remove(this);
+        GameManager._inst.SpeedOn.Play();
+        PostProcessEffect._inst.setLens(.4f, .7f, .8f);
+        ScoreManager._inst.IncreaseScore();
+        CameraMain._inst.camShake();
+        Monster._inst.AttackAfter(2f);
+        Destroy(gameObject, 2f);
     }
 
 

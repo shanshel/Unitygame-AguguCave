@@ -6,42 +6,27 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController _inst;
     [SerializeField]
-    float cubeSize = .5f;
-
-
-    [SerializeField]
     GameObject playerActionEffectPrefab;
-
-    Vector3 shadowTraget, playerTarget; // Target to follow
-    Vector3 ShadowtargetLastPos, pTargetLastPos;
-    Tweener Shadowtween, playerTweeen;
-
-    float lastAngle = 90f;
-    float lastScale = 1;
-    public float scaleStep = .2f;
  
     private float playerTimeout = 0f;
-
     public GameObject playerPiecePrefab, shadowPiecePrefab, shadowContainer;
     private List<GameObject> playerShapes = new List<GameObject>();
+    private List<Vector3> playerShapePoss = new List<Vector3>();
     private List<GameObject> shadowShapes = new List<GameObject>();
- 
-    public GameObject pivotObject, containerObject;
-    private Vector3 pivoitPoint;
+    
     bool freezPlayerInput = false;
-    Rigidbody _rigidBody;
     private void Awake()
     {
         _inst = this;
-        _rigidBody = GetComponent<Rigidbody>();
     }
     private void Start()
     {
-        pivoitPoint = pivotObject.transform.position;
+
         for (var x = 0; x < 17; x++)
         {
             GameObject cube = Instantiate(playerPiecePrefab, transform);
             playerShapes.Add(cube);
+            playerShapePoss.Add(cube.transform.position);
         }
 
         for (var x = 0; x < 17; x++)
@@ -49,177 +34,141 @@ public class PlayerController : MonoBehaviour
             GameObject cube = Instantiate(shadowPiecePrefab, shadowContainer.transform);
             shadowShapes.Add(cube);
         }
-
-
-   
-        playerTarget = transform.position;
-        playerTweeen = transform.DOMove(playerTarget, 0.3f).SetAutoKill(false).SetEase(Ease.OutElastic, .5f);
-        pTargetLastPos = playerTarget;
-
-
-        shadowTraget = new Vector3(transform.position.x, transform.position.y, playerTarget.z + 5f);
-        Shadowtween = shadowContainer.transform.DOMove(shadowTraget, .1f).SetAutoKill(false);
-        ShadowtargetLastPos = shadowTraget;
-
-     
     }
     private void Update()
     {
-
-        ShadowMovemeent();
-
-        if (playerTimeout > 0f)
-        {
-            playerTimeout -= Time.deltaTime;
-            return;
-        }
-            
+        playerTimeout -= Time.deltaTime;
         movement();
         rotation();
-        scaleListen();
     }
-
-    void ShadowMovemeent()
+    
+    void rotation(int forceRotateCount = 0)
     {
-        shadowTraget = new Vector3(transform.position.x, transform.position.y, spawner._inst.getCurrentObstaclePosition().z - .5f);
 
-        Debug.Log(shadowTraget);
-        if (ShadowtargetLastPos == shadowTraget) return;
-        // Add a Restart in the end, so that if the tween was completed it will play again
-        var pos = shadowTraget;
-
-        Shadowtween.ChangeEndValue(pos, true).Restart();
-        ShadowtargetLastPos = shadowTraget;
-    }
-
-    void rotation()
-    {
        
-        if (!freezPlayerInput && Input.GetKeyDown(KeyCode.Space))
+        if ((!freezPlayerInput && Input.GetKeyDown(KeyCode.Space)) || forceRotateCount > 0)
         {
+            if (forceRotateCount == 0) forceRotateCount = 1;
+            freezPlayerInput = true;
+            for (var ri = 0; ri < forceRotateCount; ri++)
+            {
+                SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
+                Instantiate(playerActionEffectPrefab, transform);
+                Vector3 centerPoint = playerShapes[0].transform.position;
+                for (var i = 0; i < playerShapePoss.Count; i++)
+                {
+                   
+                    shadowShapes[i].transform.RotateAround(centerPoint, Vector3.forward, 90f);
+                    playerShapes[i].transform.DOMoveX(shadowShapes[i].transform.position.x, .2f);
+                    playerShapes[i].transform.DOMoveY(shadowShapes[i].transform.position.y, .2f);
 
-            SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
-            Instantiate(playerActionEffectPrefab, transform);
-
-          
-            transform.DOLocalRotateQuaternion(Quaternion.Euler(0, 0, lastAngle), .3f).SetEase(Ease.OutElastic);
-            if (lastAngle + 90f >= 360)
-                lastAngle = 0f;
-            else
-                lastAngle = lastAngle + 90f;
-
-            playerTimeout = .1f;
+                    //playerShapes[i].transform.RotateAround(centerPoint, Vector3.forward, 90f);
+                    Vector3 shapePos = playerShapePoss[i];
+                    shapePos.x = shadowShapes[i].transform.position.x;
+                    shapePos.y = shadowShapes[i].transform.position.y;
+                    playerShapePoss[i] = shapePos;
+                }           
+            }
+            playerTimeout += .2f;
+            freezPlayerInput = false;
         }
     }
 
-    void scaleListen()
-    {
-        return;
-        /*
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-
-            lastScale += scaleStep;
-     
-            if (lastScale >= maxScale)
-            {
-                lastScale = 1;
-                SoundManager._inst.playSFX(EnumsData.SFXEnum.scaleDown);
-
-            }
-            else
-            {
-                SoundManager._inst.playSFX(EnumsData.SFXEnum.scaleUp);
-
-            }
-
-            Instantiate(playerActionEffectPrefab, transform);
-            transform.DOScale(lastScale, .3f).SetEase(Ease.OutElastic);
-            playerTimeout = .1f;
-
-        }
-        */
-    }
+  
     void movement()
     {
-        if (!freezPlayerInput)
+        Vector3 move = Vector3.zero;
+        if (!freezPlayerInput && playerTimeout <= 0f)
         {
             if (Input.GetKeyDown(KeyCode.W))
             {
-                playerTarget.y += cubeSize;
+                move.y = 1;
             }
             else if (Input.GetKeyDown(KeyCode.S))
             {
-                playerTarget.y -= cubeSize;
+                move.y = -1;
             }
 
 
             if (Input.GetKeyDown(KeyCode.D))
             {
-                playerTarget.x += cubeSize;
+                move.x = 1;
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
-                playerTarget.x -= cubeSize;
+                move.x = -1;
             }
         }
 
+        float shadowZ = spawner._inst.getCurrentObstaclePosition().z - 2f;
+        shadowContainer.transform.position = new Vector3(shadowContainer.transform.position.x, shadowContainer.transform.position.y, shadowZ);
+        if (move == Vector3.zero) return;
+    
 
-        if (pTargetLastPos == playerTarget) return;
-        SoundManager._inst.playSFX(EnumsData.SFXEnum.dash);
-        Instantiate(playerActionEffectPrefab, transform);
+        freezPlayerInput = true;
+        for (var i = 0; i < playerShapes.Count; i++) 
+        {
+            playerShapePoss[i] += move;
+            var pos = playerShapePoss[i];
+            playerShapes[i].transform.DOMove(pos, .1f);
+            pos.z = shadowContainer.transform.position.z;
+            shadowShapes[i].transform.DOMove(pos, .1f);
+        }
 
         playerTimeout = .1f;
-        playerTweeen.ChangeEndValue(playerTarget, true).Restart();
-        pTargetLastPos = playerTarget;
+        freezPlayerInput = false;
     }
 
 
 
     IEnumerator buildShape(List<GameObject> cubes)
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.15f);
         var playerCubeIndex = 0;
-        Vector3 distanceToCenter = cubes[0].transform.position - pivoitPoint;
+        Vector3 distanceToCenter = Floor(cubes[0].transform.position) - Floor(playerShapes[0].transform.position); //- pivoitPoint;
+        
         for (var x = 0; x < cubes.Count; x++)
         {
             if (!cubes[x].activeInHierarchy)
             {
 
 
-                Vector3 pos = cubes[x].transform.position - distanceToCenter;
+                Vector3 pos = Floor( cubes[x].transform.position - distanceToCenter );
 
 
                 shadowShapes[playerCubeIndex].SetActive(true);
-                shadowShapes[playerCubeIndex].transform.DOMoveX(pos.x, .4f);
-                shadowShapes[playerCubeIndex].transform.DOMoveY(pos.y, .4f);
+                shadowShapes[playerCubeIndex].transform.DOMoveX(pos.x, .2f);
+                shadowShapes[playerCubeIndex].transform.DOMoveY(pos.y, .2f);
 
 
               
                 playerShapes[playerCubeIndex].SetActive(true);
-                playerShapes[playerCubeIndex].transform.DOMoveX(pos.x, .4f);
-                playerShapes[playerCubeIndex].transform.DOMoveY(pos.y, .4f);
+                playerShapes[playerCubeIndex].transform.DOMoveX(pos.x, .2f);
+                playerShapes[playerCubeIndex].transform.DOMoveY(pos.y, .2f);
+                playerShapePoss[x] = pos;
                 playerCubeIndex++;
             }
         }
-        pivoitPoint = playerShapes[0].transform.position;
+        yield return new WaitForSeconds(.21f);
+        
+        rotation(Random.Range(1, 3));
         freezPlayerInput = false;
+       
+       
     }
     IEnumerator decayShape(List<GameObject> cubes)
     {
-
+       
         for (var x = 0; x < playerShapes.Count; x++)
         {
-            var pos = pivoitPoint;
-
-            shadowShapes[x].transform.DOMoveX(pos.x, .2f);
-            shadowShapes[x].transform.DOMoveY(pos.y, .2f);
-
-            playerShapes[x].transform.DOMoveX(pos.x, .2f);
-            playerShapes[x].transform.DOMoveY(pos.y, .2f);
+            var pos = Floor(playerShapes[0].transform.position);  
+            shadowShapes[x].transform.DOMoveX(pos.x, .1f);
+            shadowShapes[x].transform.DOMoveY(pos.y, .1f);
+            playerShapes[x].transform.DOMoveX(pos.x, .1f);
+            playerShapes[x].transform.DOMoveY(pos.y, .1f);
 
         }
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.11f);
         for (var x = 0; x < playerShapes.Count; x++)
         {
             playerShapes[x].SetActive(false);
@@ -227,26 +176,23 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    Vector3 shapeDistance;
-    GameObject getActiveCubeFromPlayerShape()
-    {
-        for (var x = 0; x < playerShapes.Count; x++)
-        {
-            if (playerShapes[x].activeInHierarchy)
-                return playerShapes[x];
-        }
 
-        return null;
-    }
-
-    Vector3 lastCenterPoint;
     public void setPlayerShape(List<GameObject> cubes, GameObject obstcalePiviot)
     {
+       
         freezPlayerInput = true;
-
         StartCoroutine(decayShape(cubes));
         StartCoroutine(buildShape(cubes));
+        playerTimeout = .4f;
     }
 
+
+    public Vector3 Floor(Vector3 vector3)
+    {
+        return new Vector3(
+            Mathf.Floor(vector3.x),
+            Mathf.Floor(vector3.y ),
+            Mathf.Floor(vector3.z ));
+    }
 
 }
