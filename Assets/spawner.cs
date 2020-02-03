@@ -46,7 +46,7 @@ public class spawner : MonoBehaviour
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
         CameraMain._inst.spawnObs();
 
-       
+        SoundManager._inst.playSFX(EnumsData.SFXEnum.spawnObst);
         obs.speed = currentSpeed;
         if (currentSpeed < maxspeed)
         {
@@ -54,5 +54,26 @@ public class spawner : MonoBehaviour
         }
         
     }
-  
+
+    public void playerFail()
+    {
+        if (GameManager._inst.isGameOver) return;
+        GameManager._inst.gameOver();
+     
+    }
+
+    public void playerPass()
+    {
+        if (GameManager._inst.isGameOver) return;
+        PlayerController._inst.onPlayerPass();
+        GameManager._inst.SpeedOn.Play();
+        PostProcessEffect._inst.changeProfile();
+        ScoreManager._inst.IncreaseScore();
+        CameraMain._inst.camShake();
+        Monster._inst.AttackAfter(2f);
+
+    }
+
+    
+
 }

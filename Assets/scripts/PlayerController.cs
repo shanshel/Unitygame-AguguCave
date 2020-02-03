@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private List<GameObject> shadowShapes = new List<GameObject>();
 
     public GameObject PlayerFirstPiece;
+    public GameObject pointPrefab;
     
     bool freezPlayerInput = false;
     private void Awake()
@@ -41,15 +42,41 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (GameManager._inst.isGameOver)
+        {
+           
+            return;
+        }
+            
         playerTimeout -= Time.deltaTime;
         movement();
         rotation();
     }
+
+    public void onPlayerDie()
+    {
+        transform.DOShakePosition(.3f, 1.5f, 5, 80f).SetLoops(-1, LoopType.Incremental);
+    }
     
+    public void onPlayerPass()
+    {
+        var pos = playerShapes[0].transform.position;
+        pos.z -= 1.5f;
+        var gamObj = Instantiate(pointPrefab, pos, Quaternion.identity, transform);
+        gamObj.transform.localScale = new Vector3(2f, 2f, 2f);
+        gamObj.transform.DOScale(0f, 2f).SetEase(Ease.Linear);
+        gamObj.transform.DOMoveY(pos.y + 6f, 2f).SetEase(Ease.InOutElastic);
+        GameManager._inst.score++;
+        Invoke("addScore", 1f);
+        Destroy(gamObj, 3f);
+    }
+    void addScore()
+    {
+        GameManager._inst.scoreText.text = GameManager._inst.score.ToString();
+    }
+
     void rotation(int forceRotateCount = 0)
     {
-
-       
         if ((!freezPlayerInput && Input.GetKeyDown(KeyCode.Space)) || forceRotateCount > 0)
         {
             if (forceRotateCount == 0) forceRotateCount = 1;

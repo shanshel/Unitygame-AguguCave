@@ -7,15 +7,31 @@ using static EnumsData;
 public class SoundManager : MonoBehaviour
 {
 
-    public AudioClip dashSfx, rotateSfx, scaleUpSfx, scaleDownSfx, passSfx;
-    public static SoundManager _inst;
+    public AudioClip dashSfx, rotateSfx, scaleUpSfx, scaleDownSfx, passSfx, 
+        spawnObstSfx, monsterLaughSfx, loseSfx, destroySfx;
 
+    public AudioSource _music;
+    float targetPitch = .4f;
+    public static SoundManager _inst;
+    bool stopCheckGameOver;
 
     private void Awake()
     {
         _inst = this;
     }
 
+    private void Update()
+    {
+        if (!stopCheckGameOver && GameManager._inst.isGameOver)
+        {
+            _music.pitch = Mathf.MoveTowards(_music.pitch, targetPitch, Time.deltaTime * .5f);
+            if (_music.pitch == targetPitch)
+            {
+                _music.Stop();
+                stopCheckGameOver = true;
+            }
+        }
+    }
     private void Start()
     {
        
@@ -43,6 +59,18 @@ public class SoundManager : MonoBehaviour
             case SFXEnum.pass:
                 audio = passSfx;
                 break;
+            case SFXEnum.spawnObst:
+                audio = spawnObstSfx;
+                break;
+            case SFXEnum.monsterLaugh:
+                audio = monsterLaughSfx;
+                break;
+            case SFXEnum.lose:
+                audio = loseSfx;
+                break;
+            case SFXEnum.destroy:
+                audio = destroySfx;
+                break;
         }
 
         return audio;
@@ -66,9 +94,7 @@ public class SoundManager : MonoBehaviour
     IEnumerator playSFXCorotPrivate(SFXEnum sfx, float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        AudioClip sfxToPlay = getSFX(sfx);
-        Doozy.Engine.Soundy.SoundyManager.Play(sfxToPlay);
-        yield return null;
+        playSFX(sfx);
     }
 
 
@@ -80,6 +106,8 @@ public class SoundManager : MonoBehaviour
         sfx.Stop();
         yield return null;
     }
+
+ 
 
  
 }

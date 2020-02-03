@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using DG.Tweening;
 public class obstacles : MonoBehaviour
 {
@@ -304,23 +303,17 @@ public class obstacles : MonoBehaviour
     public void obstFail()
     {
         if (isPassed) return;
-
+        spawner._inst.playerFail();
         isPassed = true;
-        SceneManager.LoadScene(1);
     }
     public void obstPass()
     {
+       
         if (isPassed) return;
         isPassed = true;
         speed = 25;
         spawner._inst.activeObstacles.Remove(this);
-        GameManager._inst.SpeedOn.Play();
-        //PostProcessEffect._inst.setLens(.4f, .7f, .8f);
-        PostProcessEffect._inst.changeProfile();
-        ScoreManager._inst.IncreaseScore();
-        CameraMain._inst.camShake();
-        Monster._inst.AttackAfter(2f);
-
+        spawner._inst.playerPass();
         Destroy(gameObject, 2f);
     }
 

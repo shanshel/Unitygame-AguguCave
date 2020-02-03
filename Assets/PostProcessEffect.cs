@@ -84,10 +84,10 @@ public class PostProcessEffect : MonoBehaviour
         if (profileChangingTimer > 0f)
         {
             Debug.Log("Move Toward Profile: " + targetProfile);
-            colorFilter.temperature.value = Mathf.MoveTowards(colorFilter.temperature.value, tempratures[targetProfile], Time.deltaTime * 50f);
-            colorFilter.tint.value = Mathf.MoveTowards(colorFilter.tint.value, tints[targetProfile], Time.deltaTime * 50f);
-            colorFilter.saturation.value = Mathf.MoveTowards(colorFilter.saturation.value, saturations[targetProfile], Time.deltaTime * 50f);
-            colorFilter.lift.value = Vector4.MoveTowards(colorFilter.lift.value, lifts[targetProfile], Time.deltaTime * 50f);
+            colorFilter.temperature.value = Mathf.MoveTowards(colorFilter.temperature.value, tempratures[targetProfile], Time.deltaTime * 5f);
+            colorFilter.tint.value = Mathf.MoveTowards(colorFilter.tint.value, tints[targetProfile], Time.deltaTime * 5f);
+            colorFilter.saturation.value = Mathf.MoveTowards(colorFilter.saturation.value, saturations[targetProfile], Time.deltaTime * 5f);
+            colorFilter.lift.value = Vector4.MoveTowards(colorFilter.lift.value, lifts[targetProfile], Time.deltaTime * 5f);
             profileChangingTimer -= Time.deltaTime;
         }
 

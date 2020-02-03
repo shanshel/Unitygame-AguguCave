@@ -6,7 +6,8 @@ public class EnumsData
 {
     public enum SFXEnum
     {
-        dash, rotate, scaleUp, scaleDown, pass, hited
+        dash, rotate, scaleUp, scaleDown, pass, hited, spawnObst,
+        monsterLaugh, lose, destroy
     }
 
     public enum CubeTypeEnum
