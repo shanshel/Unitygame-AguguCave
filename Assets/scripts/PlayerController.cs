@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     private List<GameObject> playerShapes = new List<GameObject>();
     private List<Vector3> playerShapePoss = new List<Vector3>();
     private List<GameObject> shadowShapes = new List<GameObject>();
+
+    public GameObject PlayerFirstPiece;
     
     bool freezPlayerInput = false;
     private void Awake()
@@ -21,8 +23,10 @@ public class PlayerController : MonoBehaviour
     }
     private void Start()
     {
+        playerShapes.Add(PlayerFirstPiece);
+        playerShapePoss.Add(PlayerFirstPiece.transform.position);
 
-        for (var x = 0; x < 17; x++)
+        for (var x = 0; x < 16; x++)
         {
             GameObject cube = Instantiate(playerPiecePrefab, transform);
             playerShapes.Add(cube);
@@ -99,8 +103,12 @@ public class PlayerController : MonoBehaviour
                 move.x = -1;
             }
         }
-
-        float shadowZ = spawner._inst.getCurrentObstaclePosition().z - 2f;
+        float shadowZ = -10f;
+        if (spawner._inst.getCurrentObstaclePosition() != Vector3.zero)
+        {
+            shadowZ = spawner._inst.getCurrentObstaclePosition().z - 2f;
+        }
+   
         shadowContainer.transform.position = new Vector3(shadowContainer.transform.position.x, shadowContainer.transform.position.y, shadowZ);
         if (move == Vector3.zero) return;
     

@@ -2,36 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using DG.Tweening;
 public class obstacles : MonoBehaviour
 {
     public float speed = 10;
     public ParticleSystem speedon;
     public bool isPassed = false;
-    public GameObject obstacleCube, pivoitObject, hardContainer;
+    public GameObject obstacleCube, pivoitObject, hardContainer, passWall, dangerWall;
     private GameObject[] cubes = new GameObject[48];
     public int cubePerRow = 8;
 
+    
     public int touchCount, touchCountRequired;
+
+
+    bool isReadyToMove;
+    Vector3 dangerWallScale, passWallScale;
     private void Start()
     {
-
+        dangerWallScale = dangerWall.transform.localScale;
+        passWallScale = passWall.transform.localScale;
+        dangerWall.transform.localScale = Vector3.zero;
+        passWall.transform.localScale = Vector3.zero;
         for (var x = 0; x < cubes.Length; x++)
         {
+        
             var pos = transform.position;
             var round = Mathf.Floor(x / cubePerRow);
             pos.x += x - (cubePerRow * round);
             pos.y -= round;
             
-            GameObject cube = Instantiate(obstacleCube, pos, Quaternion.identity, hardContainer.transform);
+            GameObject cube = Instantiate(obstacleCube, new Vector3(0f, 20f, 0f), Quaternion.identity, hardContainer.transform);
+        
             cubes[x] = cube;
+            cubes[x].transform.DOMove(pos, Random.Range(.2f, .6f)).SetEase(Ease.InOutBounce);
+
+
         }
-        Invoke("GenerateRandomShape", .2f);
+        Invoke("GenerateRandomShape", .65f);
         spawner._inst.activeObstacles.Add(this);
     }
 
     void GenerateRandomShape()
     {
+        dangerWall.transform.DOScale(dangerWallScale, .3f).SetEase(Ease.InFlash);
+        passWall.transform.DOScale(passWallScale, .5f).SetEase(Ease.InFlash);
+
+   
+        isReadyToMove = true;
         for (var x = 0; x < cubes.Length; x++)
         {
             cubes[x].SetActive(true);
@@ -278,7 +296,8 @@ public class obstacles : MonoBehaviour
     
     private void Update()
     {
-        transform.Translate(Vector3.back * speed * Time.deltaTime);
+        if (isReadyToMove)
+            transform.Translate(Vector3.back * speed * Time.deltaTime);
     }
 
 
@@ -296,10 +315,12 @@ public class obstacles : MonoBehaviour
         speed = 25;
         spawner._inst.activeObstacles.Remove(this);
         GameManager._inst.SpeedOn.Play();
-        PostProcessEffect._inst.setLens(.4f, .7f, .8f);
+        //PostProcessEffect._inst.setLens(.4f, .7f, .8f);
+        PostProcessEffect._inst.changeProfile();
         ScoreManager._inst.IncreaseScore();
         CameraMain._inst.camShake();
         Monster._inst.AttackAfter(2f);
+
         Destroy(gameObject, 2f);
     }
 

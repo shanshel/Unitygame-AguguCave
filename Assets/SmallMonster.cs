@@ -5,9 +5,16 @@ using DG.Tweening;
 
 public class SmallMonster : MonoBehaviour
 {
-
+    Vector3 startPos;
+    public int direction = 1;
     private void Start()
     {
-        transform.DOBlendablePunchRotation(new Vector3(1f, 1f, 1f), 1f, 6, 1).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InElastic);
+        startPos = transform.localPosition;
+    }
+    private void Update()
+    {
+       
+        transform.localPosition = new Vector3(startPos.x + (direction * AudioPeer._audioBandBuffer[0] * 5f), startPos.y + (AudioPeer._audioBandBuffer[0] * 2f), startPos.z);
+        
     }
 }

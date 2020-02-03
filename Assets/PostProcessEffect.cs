@@ -7,6 +7,17 @@ public class PostProcessEffect : MonoBehaviour
 {
     public static PostProcessEffect _inst;
 
+    //profiling
+    public float[] tempratures;
+    public float[] tints;
+    public float[] saturations;
+    public Vector4[] lifts;
+
+    int targetProfile;
+    float profileChangingTimer;
+    Vector4 targettLift;
+    float targetTint, targetTemprature, targetSaturation;
+
     private PostProcessVolume m_PostProcessVolume;
     private LensDistortion lensProfile;
     private ColorGrading colorFilter;
@@ -29,6 +40,7 @@ public class PostProcessEffect : MonoBehaviour
         lenScaleTarget = lenDefaultScale;
     }
 
+   
     public void setLens(float time, float centerY, float scale)
     {
         StartCoroutine(resetLens(time));
@@ -36,6 +48,28 @@ public class PostProcessEffect : MonoBehaviour
         lenScaleTarget = scale;
 
     }
+
+
+    public void changeProfile(int profileIndex = -1)
+    {
+        if (profileIndex == -1)
+        {
+            profileIndex = targetProfile + 1;
+            if (profileIndex == tempratures.Length)
+                profileIndex = 0;
+        }
+
+        Debug.Log("Load Profile: " + profileIndex);
+        if (tempratures.Length + 
+            tints.Length +
+            saturations.Length + 
+            lifts.Length == (tempratures.Length * 4))
+        {
+            targetProfile = profileIndex;
+            profileChangingTimer = 1.5f;
+        }
+    }
+
     IEnumerator resetLens(float time)
     {
         yield return new WaitForSeconds(time);
@@ -43,8 +77,21 @@ public class PostProcessEffect : MonoBehaviour
         lenScaleTarget = lenDefaultScale;
     }
 
+
     private void Update()
     {
+        
+        if (profileChangingTimer > 0f)
+        {
+            Debug.Log("Move Toward Profile: " + targetProfile);
+            colorFilter.temperature.value = Mathf.MoveTowards(colorFilter.temperature.value, tempratures[targetProfile], Time.deltaTime * 50f);
+            colorFilter.tint.value = Mathf.MoveTowards(colorFilter.tint.value, tints[targetProfile], Time.deltaTime * 50f);
+            colorFilter.saturation.value = Mathf.MoveTowards(colorFilter.saturation.value, saturations[targetProfile], Time.deltaTime * 50f);
+            colorFilter.lift.value = Vector4.MoveTowards(colorFilter.lift.value, lifts[targetProfile], Time.deltaTime * 50f);
+            profileChangingTimer -= Time.deltaTime;
+        }
+
+
         if (false)
         {
             var colorF = AudioPeer._audioBandBuffer[0];
