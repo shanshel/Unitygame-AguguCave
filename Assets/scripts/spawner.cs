@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class spawner : MonoBehaviour
 {
-    private Shake shake;
     public static spawner _inst;
     public obstacles[] obstclesPattern;
     public GameObject[] playerShapes;
@@ -24,10 +23,8 @@ public class spawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        shake = GameObject.FindGameObjectWithTag("ScreenShake").GetComponent<Shake>();
         currentSpeed = startspeed;
 
-        
     }
 
 

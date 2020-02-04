@@ -6,7 +6,6 @@ public class Monster : MonoBehaviour
 {
     public static Monster _inst;
     private Animator _animator;
-    private Shake shake;
     Vector3 startScale, startPos;
     // Start is called before the first frame update
 
