@@ -40,7 +40,7 @@ public class Monster : MonoBehaviour
 
     IEnumerator spawnObstacle()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2.5f);
         spawner._inst.SpawnObs();
         yield return null;
     }

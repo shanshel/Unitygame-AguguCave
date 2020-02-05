@@ -8,6 +8,7 @@ public class ObstacleHardChecker : MonoBehaviour
     obstacles _father;
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other.tag);
         if (other.tag == "Player")
         {
             _father.obstFail();

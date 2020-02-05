@@ -24,7 +24,6 @@ public class spawner : MonoBehaviour
     void Start()
     {
         currentSpeed = startspeed;
-
     }
 
 
@@ -41,6 +40,8 @@ public class spawner : MonoBehaviour
        
         int rand = Random.Range(0, obstclesPattern.Length);
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
+        Debug.Log("ERROR");
+        PlayerHeadAnim._inst.playerAnimWhenSpawnObstcale();
         CameraMain._inst.spawnObs();
 
         SoundManager._inst.playSFX(EnumsData.SFXEnum.spawnObst);
@@ -62,6 +63,7 @@ public class spawner : MonoBehaviour
     public void playerPass()
     {
         if (GameManager._inst.isGameOver) return;
+
         PlayerController._inst.onPlayerPass();
         GameManager._inst.SpeedOn.Play();
         PostProcessEffect._inst.changeProfile();

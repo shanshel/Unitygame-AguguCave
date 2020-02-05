@@ -23,6 +23,12 @@ public class obstacles : MonoBehaviour
         passWallScale = passWall.transform.localScale;
         dangerWall.transform.localScale = Vector3.zero;
         passWall.transform.localScale = Vector3.zero;
+
+        int xMove = Random.Range(-1, 2);
+        int yMove = Random.Range(0, 7);
+        var currentPos = transform.position;
+        transform.position = new Vector3(currentPos.x + xMove, currentPos.y + yMove, currentPos.z);
+
         for (var x = 0; x < cubes.Length; x++)
         {
         
@@ -47,7 +53,7 @@ public class obstacles : MonoBehaviour
         dangerWall.transform.DOScale(dangerWallScale, .3f).SetEase(Ease.InFlash);
         passWall.transform.DOScale(passWallScale, .5f).SetEase(Ease.InFlash);
 
-   
+
         isReadyToMove = true;
         for (var x = 0; x < cubes.Length; x++)
         {

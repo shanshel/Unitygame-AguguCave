@@ -64,13 +64,14 @@ public class PlayerController : MonoBehaviour
     
     public void onPlayerPass()
     {
+        PlayerHeadAnim._inst.playerAnimWhenObstcalePassed();
         var pos = playerShapes[0].transform.position;
         pos.z -= 1.5f;
         var gamObj = Instantiate(pointPrefab, pos, Quaternion.identity, transform);
         gamObj.transform.localScale = new Vector3(2f, 2f, 2f);
         gamObj.transform.DOScale(0f, 2f).SetEase(Ease.Linear);
         gamObj.transform.DOMoveY(pos.y + 6f, 2f).SetEase(Ease.InOutElastic);
-        GameManager._inst.score++;
+        GameManager._inst.score += 50;
         Invoke("addScore", 1f);
         Destroy(gamObj, 3f);
     }
@@ -180,21 +181,25 @@ public class PlayerController : MonoBehaviour
             
             if (Input.GetKeyDown(KeyCode.W))
             {
-                move.y = 1;
+                if (playerShapes[0].transform.position.y <= 9f)
+                    move.y = 1;
             }
             else if (Input.GetKeyDown(KeyCode.S))
             {
-                move.y = -1;
+                if (playerShapes[0].transform.position.y >= -3f)
+                    move.y = -1;
             }
 
 
             if (Input.GetKeyDown(KeyCode.D))
             {
-                move.x = 1;
+                if (playerShapes[0].transform.position.x <= 6f)
+                    move.x = 1;
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
-                move.x = -1;
+                if (playerShapes[0].transform.position.x >= -6f)
+                    move.x = -1;
             }
 
 
