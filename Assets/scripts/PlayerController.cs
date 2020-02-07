@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     bool freezPlayerInput = false;
 
     float rotateTimer;
+
+    public Joystick joystick;
     private void Awake()
     {
         _inst = this;
@@ -53,8 +55,7 @@ public class PlayerController : MonoBehaviour
             
         rotateTimer -= Time.deltaTime;
         //movmentSmooth();
-        movement();
-        rotation();
+        movement(Vector3.zero);
     }
 
     public void onPlayerDie()
@@ -70,7 +71,7 @@ public class PlayerController : MonoBehaviour
         var gamObj = Instantiate(pointPrefab, pos, Quaternion.identity, transform);
         gamObj.transform.localScale = new Vector3(2f, 2f, 2f);
         gamObj.transform.DOScale(0f, 2f).SetEase(Ease.Linear);
-        gamObj.transform.DOMoveY(pos.y + 6f, 2f).SetEase(Ease.InOutElastic);
+        gamObj.transform.DOMoveY(pos.y + 5f, 2f).SetEase(Ease.InOutElastic);
         GameManager._inst.score += 50;
         Invoke("addScore", 1f);
         Destroy(gamObj, 3f);
@@ -80,34 +81,36 @@ public class PlayerController : MonoBehaviour
         GameManager._inst.scoreText.text = GameManager._inst.score.ToString();
     }
 
-    void rotation(int forceRotateCount = 0)
+    public void rotation(int forceRotateCount = 1)
     {
         if (rotateTimer > 0f) return;
-        if ((Input.GetKeyDown(KeyCode.Space)) || forceRotateCount > 0)
+        rotateTimer = .2f;
+        if (forceRotateCount == 0) forceRotateCount = 1;
+        var angle = forceRotateCount * 90f;
+        SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
+        Instantiate(playerActionEffectPrefab, transform);
+        Vector3 centerPoint = playerShapes[0].transform.position;
+        for (var i = 0; i < playerShapePoss.Count; i++)
         {
-            rotateTimer = .2f;
-            if (forceRotateCount == 0) forceRotateCount = 1;
-            var angle = forceRotateCount * 90f;
-            SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
-            Instantiate(playerActionEffectPrefab, transform);
-            Vector3 centerPoint = playerShapes[0].transform.position;
-            for (var i = 0; i < playerShapePoss.Count; i++)
-            {
                    
-                shadowShapes[i].transform.RotateAround(centerPoint, Vector3.forward, angle);
-                playerShapes[i].transform.DOMoveX(shadowShapes[i].transform.position.x, .15f);
-                playerShapes[i].transform.DOMoveY(shadowShapes[i].transform.position.y, .15f);
+            shadowShapes[i].transform.RotateAround(centerPoint, Vector3.forward, angle);
+            playerShapes[i].transform.DOMoveX(shadowShapes[i].transform.position.x, .15f);
+            playerShapes[i].transform.DOMoveY(shadowShapes[i].transform.position.y, .15f);
 
-                //playerShapes[i].transform.RotateAround(centerPoint, Vector3.forward, 90f);
-                Vector3 shapePos = playerShapePoss[i];
-                shapePos.x = shadowShapes[i].transform.position.x;
-                shapePos.y = shadowShapes[i].transform.position.y;
-                playerShapePoss[i] = shapePos;
-            }
+            //playerShapes[i].transform.RotateAround(centerPoint, Vector3.forward, 90f);
+            Vector3 shapePos = playerShapePoss[i];
+            shapePos.x = shadowShapes[i].transform.position.x;
+            shapePos.y = shadowShapes[i].transform.position.y;
+            playerShapePoss[i] = shapePos;
         }
+      
     }
 
-  
+    private void OnMouseDrag()
+    {
+        
+    }
+
     void movmentSmooth()
     {
         isSmoothMovement = true;
@@ -119,7 +122,7 @@ public class PlayerController : MonoBehaviour
         if (!freezPlayerInput)
         {
             rotateTimer = .1f;
-
+            
             if (SystemInfo.deviceType == DeviceType.Desktop)
             {
 
@@ -168,17 +171,50 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    void movement()
-    {
-        Vector3 move = Vector3.zero;
 
-        
+    public void moveLeft()
+    {
+        movement(new Vector3(-1f, 0, 0));
+    }
+    public void moveRight()
+    {
+        movement(new Vector3(1f, 0, 0));
+    }
+
+    public void moveUp()
+    {
+        movement(new Vector3(0, 1f, 0));
+    }
+    public void moveDown()
+    {
+        movement(new Vector3(0, -1f, 0));
+    }
+    void movement(Vector3 move)
+    {
+
+        //Vector3 move = Vector3.zero;
+
+       
         if (rotateTimer > 0f || freezPlayerInput)
             return;
 
         if (!freezPlayerInput)
         {
-            
+
+       
+           
+            if (move.y > 0f && playerShapes[0].transform.position.y >= 9f)
+                move.y = 0;
+
+            if (move.y < 0f && playerShapes[0].transform.position.y <= -3f)
+                move.y = 0;
+
+            if (move.x > 0f && playerShapes[0].transform.position.x >= 6f)
+                move.x = 0;
+
+            if (move.x < 0f && playerShapes[0].transform.position.x <= -6f)
+                move.x = 0;
+            /*
             if (Input.GetKeyDown(KeyCode.W))
             {
                 if (playerShapes[0].transform.position.y <= 9f)
@@ -189,8 +225,6 @@ public class PlayerController : MonoBehaviour
                 if (playerShapes[0].transform.position.y >= -3f)
                     move.y = -1;
             }
-
-
             if (Input.GetKeyDown(KeyCode.D))
             {
                 if (playerShapes[0].transform.position.x <= 6f)
@@ -201,7 +235,7 @@ public class PlayerController : MonoBehaviour
                 if (playerShapes[0].transform.position.x >= -6f)
                     move.x = -1;
             }
-
+            */
 
 
         }

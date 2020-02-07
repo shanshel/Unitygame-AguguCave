@@ -40,7 +40,7 @@ public class spawner : MonoBehaviour
        
         int rand = Random.Range(0, obstclesPattern.Length);
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
-        Debug.Log("ERROR");
+ 
         PlayerHeadAnim._inst.playerAnimWhenSpawnObstcale();
         CameraMain._inst.spawnObs();
 
