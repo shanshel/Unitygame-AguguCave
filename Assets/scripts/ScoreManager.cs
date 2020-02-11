@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 public class ScoreManager : MonoBehaviour
 {
-    public int score;
-    public Text ScoreText;
-    public Text finalScore;
     public static ScoreManager _inst;
     private void Awake()
     {
@@ -19,21 +16,22 @@ public class ScoreManager : MonoBehaviour
     {
 
     }
+  
     public void IncreaseScore()
     {
-        score++;
+
         SoundManager._inst.playSFX(EnumsData.SFXEnum.pass);
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.pass, .15f);
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.pass, .3f);
-        GameManager._inst.globalScrollSpeed = 5f;
+        GameManager._inst.oldGlobalScrollSpeed = GameManager._inst.globalScrollSpeed;
+        GameManager._inst.globalScrollSpeed *= 4f;
 
         Invoke("resetScrollSpeed", 1f);
-        ScoreText.text = score.ToString();
     }
 
     void resetScrollSpeed()
     {
-        GameManager._inst.globalScrollSpeed = 1f;
+        GameManager._inst.globalScrollSpeed = GameManager._inst.oldGlobalScrollSpeed;
 
     }
 

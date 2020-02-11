@@ -6,16 +6,10 @@ public class ScrollingEnv : MonoBehaviour
 {
     public float speed, endAt, startAt;
    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        float step = GameManager._inst.globalScrollSpeed * speed * Time.deltaTime;
+        float step = (speed + GameManager._inst.globalScrollSpeed) * Time.fixedDeltaTime;
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, endAt), step);
         if (transform.position.z <= endAt)
         {

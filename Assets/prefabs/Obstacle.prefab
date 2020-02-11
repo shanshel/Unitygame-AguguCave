@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2840731842763389487
 Transform:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ Light:
   serializedVersion: 9
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 50
+  m_Intensity: 10
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -140,7 +140,7 @@ Light:
   m_RenderMode: 2
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 8704
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -196,10 +196,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!114 &3856734434477011936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,7 +271,9 @@ MonoBehaviour:
   hardContainer: {fileID: 3240789800993800666}
   passWall: {fileID: 4757450276919003307}
   dangerWall: {fileID: 7625789454648379578}
-  cubePerRow: 8
+  checkPassContainer: {fileID: 4326389842189744478}
+  obstHolePrefab: {fileID: 1786647730674394793, guid: af25b253bb9be704c8b387c92336410d,
+    type: 3}
   touchCount: 0
   touchCountRequired: 0
 --- !u!1 &4326389842189744478
@@ -283,9 +285,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3685015169695703933}
-  - component: {fileID: 3723077676298586544}
-  - component: {fileID: 1383341059240027925}
-  - component: {fileID: 2859667721751100909}
   m_Layer: 9
   m_Name: CheckColliders
   m_TagString: obstacles
@@ -307,48 +306,6 @@ Transform:
   m_Father: {fileID: 3437998121856004051}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &3723077676298586544
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4326389842189744478}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 0
---- !u!65 &1383341059240027925
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4326389842189744478}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 7, y: 5, z: 2}
-  m_Center: {x: 3.5, y: -2.5, z: 0}
---- !u!114 &2859667721751100909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4326389842189744478}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6b5d90fa5343814eb9eb8be438019fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _father: {fileID: 5526534526283165576}
 --- !u!1 &4757450276919003307
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,13 +317,13 @@ GameObject:
   - component: {fileID: 357244798214813612}
   - component: {fileID: 2577377145492645912}
   - component: {fileID: 1447617289410999096}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: TransWallPass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &357244798214813612
 Transform:
   m_ObjectHideFlags: 0
@@ -453,8 +410,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7625789454648379578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 1}
-  m_LocalScale: {x: 30, y: 40, z: 1}
+  m_LocalPosition: {x: 5, y: 0, z: 5}
+  m_LocalScale: {x: 30, y: 60, z: 10}
   m_Children: []
   m_Father: {fileID: 3437998121856004051}
   m_RootOrder: 4
@@ -484,7 +441,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c1c38f71957cfc74989e7a56142c55b6, type: 2}
+  - {fileID: 2100000, guid: 6bbde2070bb3d1847a0ad86ff2cf1f17, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

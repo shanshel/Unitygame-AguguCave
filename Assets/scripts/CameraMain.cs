@@ -1,27 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 [RequireComponent(typeof (Camera))]
 public class CameraMain : MonoBehaviour
 {
     public static CameraMain _inst;
-    private Animator anim;
     public Camera _mainCamera;
+    [SerializeField]
+    private CinemachineVirtualCamera vcam;
+
+    float changeTimer, fieldOfViewTarget;
+
     private void Awake()
     {
         _inst = this;
-        anim = GetComponent<Animator>();
-        _mainCamera = GetComponent<Camera>();
     }
 
 
-    public void camShake()
+
+    public void whenPlayerPass()
     {
-        anim.SetTrigger("shake");
+        //anim.SetTrigger("spawnObs");
+        changeTimer = 1f;
+        fieldOfViewTarget = 140f;
+        Invoke("resetValues", 1f);
     }
-    public void spawnObs()
+
+    private void resetValues()
     {
-        anim.SetTrigger("spawnObs");
+        fieldOfViewTarget = 80f;
+        changeTimer = 1f;
+
+    }
+
+    private void Update()
+    {
+        changeTimer -= Time.deltaTime;
+        if (changeTimer > 0f)
+        {
+            vcam.m_Lens.FieldOfView = Mathf.MoveTowards(vcam.m_Lens.FieldOfView, fieldOfViewTarget, Time.deltaTime * 200f);
+        }
     }
 
 }

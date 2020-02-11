@@ -436,7 +436,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5196865130668598121}
-  - component: {fileID: 4092030839832348614}
+  - component: {fileID: 8865185125188579478}
   m_Layer: 0
   m_Name: MarioMonster
   m_TagString: Untagged
@@ -459,7 +459,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4092030839832348614
+--- !u!114 &8865185125188579478
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -468,13 +468,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5196865130668598118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82f42b969b3335143aa38d6f7cd2d96b, type: 3}
+  m_Script: {fileID: 11500000, guid: 28ee7ed099a2a7248b2707ba758fc892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tn: {fileID: 5196865130809007184}
-  tnBand: 1
-  shakeBand: 0
-  power: 1
 --- !u!1 &5196865130809007184
 GameObject:
   m_ObjectHideFlags: 0

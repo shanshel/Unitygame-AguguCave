@@ -11,10 +11,9 @@ public class spawner : MonoBehaviour
     public float increaseSpeed;
     public float maxspeed = 20f;
     public float startspeed = 5f;
-    private float currentSpeed;
+    public float currentSpeed;
     public List<obstacles> activeObstacles = new List<obstacles>();
 
- 
     private void Awake()
     {
         if (_inst == null)
@@ -35,6 +34,7 @@ public class spawner : MonoBehaviour
             return Vector3.zero;
 
     }
+    float starterPlusSpeed;
     public void SpawnObs()
     {
        
@@ -42,13 +42,19 @@ public class spawner : MonoBehaviour
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
  
         PlayerHeadAnim._inst.playerAnimWhenSpawnObstcale();
-        CameraMain._inst.spawnObs();
+        
 
         SoundManager._inst.playSFX(EnumsData.SFXEnum.spawnObst);
         obs.speed = currentSpeed;
+        
+        if (GameManager._inst.earthScore < 3f)
+        {
+            starterPlusSpeed = .5f;
+        }
+        
         if (currentSpeed < maxspeed)
         {
-            currentSpeed += increaseSpeed;
+            GameManager._inst.globalScrollSpeed += increaseSpeed + starterPlusSpeed;
         }
         
     }
@@ -63,13 +69,12 @@ public class spawner : MonoBehaviour
     public void playerPass()
     {
         if (GameManager._inst.isGameOver) return;
-
         PlayerController._inst.onPlayerPass();
         GameManager._inst.SpeedOn.Play();
         PostProcessEffect._inst.changeProfile();
         ScoreManager._inst.IncreaseScore();
-        CameraMain._inst.camShake();
-        Monster._inst.AttackAfter(2f);
+        Monster._inst.attackAfter(.5f);
+        CameraMain._inst.whenPlayerPass();
 
     }
 

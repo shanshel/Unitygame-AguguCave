@@ -8,13 +8,14 @@ public class ObstacleHardChecker : MonoBehaviour
     obstacles _father;
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.tag);
+      
         if (other.tag == "Player")
         {
             _father.obstFail();
         }
         else if (other.CompareTag("Passenger"))
         {
+            
             if (_father.touchCount == _father.touchCountRequired)
             {
                 _father.obstPass();
@@ -22,7 +23,6 @@ public class ObstacleHardChecker : MonoBehaviour
             else
             {
                 _father.obstFail();
-
             }
         }
 

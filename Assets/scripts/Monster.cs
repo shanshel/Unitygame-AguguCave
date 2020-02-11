@@ -19,18 +19,37 @@ public class Monster : MonoBehaviour
     {
         startScale = transform.localScale;
         startPos = transform.localPosition;
-        Invoke("Attack", 3f);
+        Invoke("Attack", 2f);
     }
 
-    public void AttackAfter(float second)
+    public void attackAfter(float time)
     {
-        Invoke("Attack", second);
-        Invoke("StopSpeedOnPar", 0.1f);
+        Invoke("StopSpeedOnPar", .4f);
+        Invoke("Attack", time);
     }
+
     public void Attack()
     {
-        _animator.SetTrigger("Attack");
-        StartCoroutine(spawnObstacle());
+
+
+        
+        float time = 2.5f;
+        if (GameManager._inst.earthScore < 3)
+        {
+            time = 2.5f;
+        }
+        else if (GameManager._inst.earthScore < 6)
+        {
+            time = 2f;
+        }
+        else 
+        {
+            time = 1.5f;
+        }
+ 
+
+        Invoke("playAttackAnimation", time);
+        Invoke("spawnObstacle", time + 1f);
     }
 
     void StopSpeedOnPar()
@@ -38,17 +57,20 @@ public class Monster : MonoBehaviour
         GameManager._inst.SpeedOn.Stop();
     }
 
-    IEnumerator spawnObstacle()
+    void playAttackAnimation()
     {
-        yield return new WaitForSeconds(2.5f);
-        spawner._inst.SpawnObs();
-        yield return null;
+        _animator.SetTrigger("Attack");
     }
+    void spawnObstacle()
+    {
+        spawner._inst.SpawnObs();
+    }
+  
 
     private void Update()
     {
         float scaleY = AudioPeer._audioBandBuffer[0];
-        transform.localScale = new Vector3(transform.localScale.x, startScale.y + scaleY * .5f, transform.localScale.z);
+        transform.localScale = new Vector3(transform.localScale.x, startScale.y + (scaleY * 2f), transform.localScale.z);
         transform.localPosition = new Vector3(startPos.x, startPos.y + (scaleY * 1.5f), startPos.z);
     }
 

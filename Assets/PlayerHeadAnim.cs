@@ -48,7 +48,8 @@ public class PlayerHeadAnim : MonoBehaviour
   
         _anim.SetTrigger("WhenObstcalePassed");
 
-
-
     }
+
+
+
 }

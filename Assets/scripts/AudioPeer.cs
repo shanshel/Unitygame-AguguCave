@@ -31,6 +31,8 @@ public class AudioPeer : MonoBehaviour
     {
    
         _audioSource = GetComponent<AudioSource>();
+
+        InvokeRepeating("slowUpdate", .1f, .1f);
     }
 
     void createAudioBand()
@@ -46,14 +48,15 @@ public class AudioPeer : MonoBehaviour
 
         }
     }
-    private void Update()
+
+    void slowUpdate()
     {
         GetSpectrumAudioSource();
         MakeFreqBandCalc();
         bandBuffer();
         createAudioBand();
-
     }
+
     void GetSpectrumAudioSource()
     {
         _audioSource.GetSpectrumData(_samples, 0, FFTWindow.Blackman);

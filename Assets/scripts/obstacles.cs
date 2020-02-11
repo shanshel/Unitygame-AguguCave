@@ -7,9 +7,10 @@ public class obstacles : MonoBehaviour
     public float speed = 10;
     public ParticleSystem speedon;
     public bool isPassed = false;
-    public GameObject obstacleCube, pivoitObject, hardContainer, passWall, dangerWall;
-    private GameObject[] cubes = new GameObject[48];
-    public int cubePerRow = 8;
+    public GameObject obstacleCube, pivoitObject, hardContainer, passWall, dangerWall, checkPassContainer;
+    private GameObject[] cubes;
+    public GameObject obstHolePrefab;
+    int cubePerRow = 3, totalCubes = 9;
 
     
     public int touchCount, touchCountRequired;
@@ -19,6 +20,38 @@ public class obstacles : MonoBehaviour
     Vector3 dangerWallScale, passWallScale;
     private void Start()
     {
+        spawner._inst.activeObstacles.Add(this);
+        StartCoroutine(buildObstacle());
+    }
+
+    IEnumerator buildObstacle()
+    {
+        if (GameManager._inst.earthScore < 5)
+        {
+            cubePerRow = 3;
+        }
+        else if (GameManager._inst.earthScore < 10)
+        {
+            cubePerRow = 4;
+        }
+        else if (GameManager._inst.earthScore < 20)
+        {
+            cubePerRow = 5;
+        }
+        else if (GameManager._inst.earthScore < 40)
+        {
+            cubePerRow = 6;
+        }
+        else
+        {
+            cubePerRow = Random.Range(3, 6);
+        }
+        totalCubes = cubePerRow * cubePerRow;
+        cubes = new GameObject[totalCubes];
+     
+
+
+
         dangerWallScale = dangerWall.transform.localScale;
         passWallScale = passWall.transform.localScale;
         dangerWall.transform.localScale = Vector3.zero;
@@ -29,46 +62,42 @@ public class obstacles : MonoBehaviour
         var currentPos = transform.position;
         transform.position = new Vector3(currentPos.x + xMove, currentPos.y + yMove, currentPos.z);
 
+        yield return 0;
         for (var x = 0; x < cubes.Length; x++)
         {
-        
+
             var pos = transform.position;
             var round = Mathf.Floor(x / cubePerRow);
             pos.x += x - (cubePerRow * round);
             pos.y -= round;
-            
-            GameObject cube = Instantiate(obstacleCube, new Vector3(0f, 20f, 0f), Quaternion.identity, hardContainer.transform);
-        
+
+            GameObject cube = Instantiate(obstacleCube, new Vector3(0f, 0f, 100f), Quaternion.identity, hardContainer.transform);
+
             cubes[x] = cube;
             cubes[x].transform.DOMove(pos, Random.Range(.2f, .6f)).SetEase(Ease.InOutBounce);
-
-
+            if (x % 2 == 0)
+                yield return 0;
         }
-        Invoke("GenerateRandomShape", .65f);
-        spawner._inst.activeObstacles.Add(this);
-    }
-
-    void GenerateRandomShape()
-    {
         dangerWall.transform.DOScale(dangerWallScale, .3f).SetEase(Ease.InFlash);
         passWall.transform.DOScale(passWallScale, .5f).SetEase(Ease.InFlash);
+        yield return new WaitForSeconds(.6f);
+    
 
-
-        isReadyToMove = true;
+        /*
         for (var x = 0; x < cubes.Length; x++)
         {
             cubes[x].SetActive(true);
         }
+        */
+     
 
-        var holeCubeCount = Random.Range(1, 16);
+        var holeCubeCount = Random.Range(1, cubePerRow * 2);
         int agreedCubeHoleCount = 0;
         List<int> cubeToDisableIndex = new List<int>();
         List<GameObject> agreedCubes = new List<GameObject>();
 
 
-        
-
-        for (var x = 0; x < holeCubeCount; x ++)
+        for (var x = 0; x < holeCubeCount; x++)
         {
             if (x == 0)
             {
@@ -76,233 +105,45 @@ public class obstacles : MonoBehaviour
                 cubeToDisableIndex.Add(randomIndex);
                 agreedCubes.Add(cubes[randomIndex]);
                 agreedCubeHoleCount++;
+                Instantiate(obstHolePrefab, cubes[randomIndex].transform.position, Quaternion.identity, checkPassContainer.transform);
                 cubes[randomIndex].SetActive(false);
             }
             else
             {
-                var dir = getDirection(cubeToDisableIndex[cubeToDisableIndex.Count - 1]);
-                var cubeIndex = getCubeIndexOnDirection(cubeToDisableIndex[cubeToDisableIndex.Count - 1], dir);
+                var dir = GameManager._inst.getDirection(cubeToDisableIndex[cubeToDisableIndex.Count - 1], cubes.Length, cubePerRow);
+                var cubeIndex = GameManager._inst.getCubeIndexOnDirection(cubeToDisableIndex[cubeToDisableIndex.Count - 1], dir, cubePerRow);
                 if (!cubeToDisableIndex.Contains(cubeIndex))
                 {
                     cubeToDisableIndex.Add(cubeIndex);
                     agreedCubes.Add(cubes[cubeIndex]);
                     agreedCubeHoleCount++;
+                    Instantiate(obstHolePrefab, cubes[cubeIndex].transform.position, Quaternion.identity, checkPassContainer.transform);
                     cubes[cubeIndex].SetActive(false);
                 }
             }
+            yield return 0;
         }
 
 
 
         touchCountRequired = agreedCubes.Count;
+        yield return 0;
         PlayerController._inst.setPlayerShape(agreedCubes, pivoitObject);
+    
+        yield return new WaitForSeconds(.1f);
+        isReadyToMove = true;
     }
 
 
-    int getCubeIndexOnDirection(int cubeIndex, EnumsData.FourDirectionEnum cubeDirection)
-    {
-
-        if (cubeDirection == EnumsData.FourDirectionEnum.Bottom)
-        {
-            return cubeIndex + cubePerRow;
-        }
-        else if (cubeDirection == EnumsData.FourDirectionEnum.Top)
-        {
-            return cubeIndex - cubePerRow;
-        }
-        else if (cubeDirection == EnumsData.FourDirectionEnum.Right)
-        {
-            return cubeIndex + 1;
-        }
-        return cubeIndex - 1;
-    }
-    EnumsData.FourDirectionEnum getDirection(int cubeIndex)
-    {
-        var rand = Random.Range(0, 4);
-        if (cubeIndex == 0)
-        {
-            
-            if (rand > 2)
-            {
-                Debug.Log("Next To First On Right: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Right;
-            }
-            else
-            {
-                Debug.Log("Next To First On Bottom: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Bottom;
-            }
-        }
-
-        else if (cubeIndex == cubes.Length - 1)
-        {
-            //return EnumsData.CubeTypeEnum.BottomRightCorner;
-            if (rand > 2)
-            {
-                Debug.Log("Next To BottomRightCorner On Top: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Top;
-            }
-            else
-            {
-                Debug.Log("Next To BottomRightCorner On Left: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Left;
-            }
-        }
-        else if (cubeIndex == cubePerRow - 1 )
-        {
-
-            //return EnumsData.CubeTypeEnum.TopRightCorner;
-
-            if (rand > 2)
-            {
-                Debug.Log("Next To TopRightCorner On Bottom: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Bottom;
-            }
-            else
-            {
-                Debug.Log("Next To TopRightCorner On Left: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Left;
-            }
-        }
-        else if (cubeIndex == cubes.Length - cubePerRow)
-        {
-
-            //return EnumsData.CubeTypeEnum.BottomLeftCorner;
-            if (rand > 2)
-            {
-                Debug.Log("Next To BottomLeftCorner On Top: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Top;
-            }
-            else
-            {
-                Debug.Log("Next To BottomLeftCorner On Right: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Right;
-            }
-        }
-        else if (Mathf.Floor(cubeIndex / cubePerRow) == 0)
-        {
-            //return EnumsData.CubeTypeEnum.TopEdge;
-            if (rand == 0)
-            {
-                Debug.Log("Next To TopEdge On Right: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Right;
-            }
-            else if (rand == 1)
-            {
-                Debug.Log("Next To TopEdge On Left: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Left;
-            }
-            else
-            {
-                Debug.Log("Next To TopEdge On Bottom: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Bottom;
-            }
-        }
-        else if (Mathf.Floor(cubeIndex / cubePerRow) == Mathf.Floor( ( cubes.Length - 1 ) / cubePerRow))
-        {
-         
-            //return EnumsData.CubeTypeEnum.BottomEdge;
-            if (rand == 0)
-            {
-                Debug.Log("Next To BottomEdge On Right: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Right;
-            }
-            else if (rand == 1)
-            {
-                Debug.Log("Next To BottomEdge On Left: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Left;
-            }
-            else
-            {
-                Debug.Log("Next To BottomEdge On Top: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Top;
-            }
-        }
-        else if (cubeIndex % cubePerRow == 0)
-        {
-            //return EnumsData.CubeTypeEnum.RightEdge;
-            if (rand == 0)
-            {
-                Debug.Log("Next To LeftEdge On Top: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Top;
-            }
-            else if (rand == 1)
-            {
-                Debug.Log("Next To LeftEdge On Bottom: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Bottom;
-            }
-            else
-            {
-                Debug.Log("Next To LeftEdge On Left: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Right;
-            }
-        }
-        else if (cubeIndex - (cubePerRow *  Mathf.Floor(cubeIndex / cubePerRow)) == cubePerRow - 1)
-        {
-            
-            //return EnumsData.CubeTypeEnum.LeftEdge;
-            if (rand == 0)
-            {
-                Debug.Log("Next To RightEdge On Top: " + cubeIndex);
-                return EnumsData.FourDirectionEnum.Top;
-            }
-            else if (rand == 1)
-            {
-                Debug.Log("Next To RightEdge On Bottom: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Bottom;
-            }
-            else
-            {
-                Debug.Log("Next To RightEdge On Right: " + cubeIndex);
-
-                return EnumsData.FourDirectionEnum.Left;
-            }
-        }
 
 
-        if (rand == 0)
-        {
-            Debug.Log("Next To Center On Top: " + cubeIndex);
 
-            return EnumsData.FourDirectionEnum.Top;
-        }
-        else if (rand == 1)
-        {
-            Debug.Log("Next To Center On Bottom: " + cubeIndex);
-
-            return EnumsData.FourDirectionEnum.Bottom;
-        }
-        else if (rand == 2)
-        {
-            Debug.Log("Next To Center On Right: " + cubeIndex);
-
-            return EnumsData.FourDirectionEnum.Right;
-        }
-        Debug.Log("Next To Center On Left: " + cubeIndex);
-
-        return EnumsData.FourDirectionEnum.Left;
-
-        //return EnumsData.CubeTypeEnum.Any;
-    }
 
     
     private void Update()
     {
         if (isReadyToMove)
-            transform.Translate(Vector3.back * speed * Time.deltaTime);
+            transform.Translate(Vector3.back * (speed + GameManager._inst.globalScrollSpeed) * Time.deltaTime);
     }
 
 

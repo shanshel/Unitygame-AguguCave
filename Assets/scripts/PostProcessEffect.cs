@@ -15,8 +15,6 @@ public class PostProcessEffect : MonoBehaviour
 
     int targetProfile;
     float profileChangingTimer;
-    Vector4 targettLift;
-    float targetTint, targetTemprature, targetSaturation;
 
     private PostProcessVolume m_PostProcessVolume;
     private LensDistortion lensProfile;
@@ -43,7 +41,7 @@ public class PostProcessEffect : MonoBehaviour
    
     public void setLens(float time, float centerY, float scale)
     {
-        StartCoroutine(resetLens(time));
+        Invoke("resetLens", time);
         lenCenterYTarget = centerY;
         lenScaleTarget = scale;
 
@@ -59,7 +57,6 @@ public class PostProcessEffect : MonoBehaviour
                 profileIndex = 0;
         }
 
-        Debug.Log("Load Profile: " + profileIndex);
         if (tempratures.Length + 
             tints.Length +
             saturations.Length + 
@@ -70,9 +67,8 @@ public class PostProcessEffect : MonoBehaviour
         }
     }
 
-    IEnumerator resetLens(float time)
+    void resetLens()
     {
-        yield return new WaitForSeconds(time);
         lenCenterYTarget = lenDefaultCenterY;
         lenScaleTarget = lenDefaultScale;
     }
@@ -83,35 +79,12 @@ public class PostProcessEffect : MonoBehaviour
         
         if (profileChangingTimer > 0f)
         {
-            Debug.Log("Move Toward Profile: " + targetProfile);
             colorFilter.temperature.value = Mathf.MoveTowards(colorFilter.temperature.value, tempratures[targetProfile], Time.deltaTime * 5f);
             colorFilter.tint.value = Mathf.MoveTowards(colorFilter.tint.value, tints[targetProfile], Time.deltaTime * 5f);
             colorFilter.saturation.value = Mathf.MoveTowards(colorFilter.saturation.value, saturations[targetProfile], Time.deltaTime * 5f);
             colorFilter.lift.value = Vector4.MoveTowards(colorFilter.lift.value, lifts[targetProfile], Time.deltaTime * 5f);
             profileChangingTimer -= Time.deltaTime;
         }
-
-
-        if (false)
-        {
-            var colorF = AudioPeer._audioBandBuffer[0];
-            if (AudioPeer._audioBandBuffer[0] < .85f)
-            {
-                colorF = .85f;
-            }
-            colorFilter.colorFilter.value = new Color(colorF, colorF, colorF);
-            if (!Mathf.Equals(lenCenterYTarget, lensProfile.centerY.value))
-            {
-                lensProfile.centerY.value = Mathf.MoveTowards(lensProfile.centerY.value, lenCenterYTarget, Time.deltaTime);
-            }
-
-            if (!Mathf.Equals(lenScaleTarget, lensProfile.scale.value))
-            {
-                lensProfile.scale.value = Mathf.MoveTowards(lensProfile.scale.value, lenScaleTarget, Time.deltaTime);
-            }
-
-        }
-
 
     }
 

@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static EnumsData;
+using Doozy.Engine.Soundy;
 
 public class SoundManager : MonoBehaviour
 {
 
-    public AudioClip dashSfx, rotateSfx, scaleUpSfx, scaleDownSfx, passSfx, 
-        spawnObstSfx, monsterLaughSfx, loseSfx, destroySfx;
+    public AudioClip dashSfx, rotateSfx, passSfx, 
+        spawnObstSfx, monsterLaughSfx, loseSfx;
 
     public AudioSource _music;
     float targetPitch = .4f;
     public static SoundManager _inst;
     bool stopCheckGameOver;
+    public SoundyController _soundy;
+
+    public SoundyManager _test;
 
     private void Awake()
     {
@@ -33,7 +37,8 @@ public class SoundManager : MonoBehaviour
     }
     private void Start()
     {
-       
+        Doozy.Engine.Soundy.SoundyManager.Play(passSfx);
+
 
     }
     AudioClip getSFX(SFXEnum sfx)
@@ -45,12 +50,6 @@ public class SoundManager : MonoBehaviour
         {
             case SFXEnum.dash:
                 audio = dashSfx;
-                break;
-            case SFXEnum.scaleUp:
-                audio = scaleUpSfx;
-                break;
-            case SFXEnum.scaleDown:
-                audio = scaleDownSfx;
                 break;
             case SFXEnum.rotate:
                 audio = rotateSfx;
@@ -67,9 +66,7 @@ public class SoundManager : MonoBehaviour
             case SFXEnum.lose:
                 audio = loseSfx;
                 break;
-            case SFXEnum.destroy:
-                audio = destroySfx;
-                break;
+      
         }
 
         return audio;
@@ -79,6 +76,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip playSFX(SFXEnum sfx)
     {
         AudioClip sfxToPlay = getSFX(sfx);
+        
         Doozy.Engine.Soundy.SoundyManager.Play(sfxToPlay);
 
       
