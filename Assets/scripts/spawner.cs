@@ -10,8 +10,7 @@ public class spawner : MonoBehaviour
 
     public float increaseSpeed;
     public float maxspeed = 20f;
-    public float startspeed = 5f;
-    public float currentSpeed;
+
     public List<obstacles> activeObstacles = new List<obstacles>();
 
     private void Awake()
@@ -22,7 +21,7 @@ public class spawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentSpeed = startspeed;
+
     }
 
 
@@ -34,7 +33,7 @@ public class spawner : MonoBehaviour
             return Vector3.zero;
 
     }
-    float starterPlusSpeed;
+    float starterPlusSpeed = 0f;
     public void SpawnObs()
     {
        
@@ -45,14 +44,18 @@ public class spawner : MonoBehaviour
         
 
         SoundManager._inst.playSFX(EnumsData.SFXEnum.spawnObst);
-        obs.speed = currentSpeed;
+   
         
         if (GameManager._inst.earthScore < 3f)
         {
             starterPlusSpeed = .5f;
         }
+        else
+        {
+            starterPlusSpeed = 0f;
+        }
         
-        if (currentSpeed < maxspeed)
+        if (GameManager._inst.globalScrollSpeed < maxspeed)
         {
             GameManager._inst.globalScrollSpeed += increaseSpeed + starterPlusSpeed;
         }
@@ -66,10 +69,10 @@ public class spawner : MonoBehaviour
      
     }
 
-    public void playerPass()
+    public void playerPass(int scorePoint)
     {
         if (GameManager._inst.isGameOver) return;
-        PlayerController._inst.onPlayerPass();
+        PlayerController._inst.onPlayerPass(scorePoint);
         GameManager._inst.SpeedOn.Play();
         PostProcessEffect._inst.changeProfile();
         ScoreManager._inst.IncreaseScore();

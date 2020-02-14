@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 public class obstacles : MonoBehaviour
 {
-    public float speed = 10;
+    
     public ParticleSystem speedon;
     public bool isPassed = false;
     public GameObject obstacleCube, pivoitObject, hardContainer, passWall, dangerWall, checkPassContainer;
@@ -12,6 +12,7 @@ public class obstacles : MonoBehaviour
     public GameObject obstHolePrefab;
     int cubePerRow = 3, totalCubes = 9;
 
+    public int earnPoint = 10;
     
     public int touchCount, touchCountRequired;
 
@@ -140,10 +141,10 @@ public class obstacles : MonoBehaviour
 
 
     
-    private void Update()
+    private void FixedUpdate()
     {
         if (isReadyToMove)
-            transform.Translate(Vector3.back * (speed + GameManager._inst.globalScrollSpeed) * Time.deltaTime);
+            transform.Translate(Vector3.back * (GameManager._inst.globalScrollSpeed) * Time.deltaTime);
     }
 
 
@@ -158,9 +159,8 @@ public class obstacles : MonoBehaviour
        
         if (isPassed) return;
         isPassed = true;
-        speed = 25;
         spawner._inst.activeObstacles.Remove(this);
-        spawner._inst.playerPass();
+        spawner._inst.playerPass(earnPoint);
         Destroy(gameObject, 2f);
     }
 

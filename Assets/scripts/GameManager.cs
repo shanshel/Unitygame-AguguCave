@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using DG.Tweening;
 public class GameManager : MonoBehaviour
 {
    
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
     public bool isGameOver;
     public float globalScrollSpeed = 1f, oldGlobalScrollSpeed = 1f;
     public float gamePlayTime;
+    public GameObject water;
     
     public int score, earthScore;
 
@@ -25,8 +27,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+        TinySauce.OnGameStarted();
         Time.timeScale = 1f;
+        water.transform.DOLocalMoveY(-2.5f, 2f).SetLoops(-1, LoopType.Yoyo);
     }
 
     // Update is called once per frame
@@ -37,6 +40,8 @@ public class GameManager : MonoBehaviour
 
     public void gameOver()
     {
+        TinySauce.OnGameFinished(score);
+
         isGameOver = true;
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.lose, .1f);
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.monsterLaugh, .6f);

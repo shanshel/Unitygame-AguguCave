@@ -19,7 +19,7 @@ public class Monster : MonoBehaviour
     {
         startScale = transform.localScale;
         startPos = transform.localPosition;
-        Invoke("Attack", 2f);
+        Invoke("Attack", .2f);
     }
 
     public void attackAfter(float time)
@@ -46,7 +46,7 @@ public class Monster : MonoBehaviour
         {
             time = 1.5f;
         }
- 
+        time = .5f;
 
         Invoke("playAttackAnimation", time);
         Invoke("spawnObstacle", time + 1f);
@@ -70,8 +70,8 @@ public class Monster : MonoBehaviour
     private void Update()
     {
         float scaleY = AudioPeer._audioBandBuffer[0];
-        transform.localScale = new Vector3(transform.localScale.x, startScale.y + (scaleY * 2f), transform.localScale.z);
-        transform.localPosition = new Vector3(startPos.x, startPos.y + (scaleY * 1.5f), startPos.z);
+        transform.localScale = new Vector3(transform.localScale.x, startScale.y + (scaleY * 1.2f), transform.localScale.z);
+        transform.localPosition = new Vector3(startPos.x, startPos.y + (scaleY * 1.2f), startPos.z);
     }
 
 }

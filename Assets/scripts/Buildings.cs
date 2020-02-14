@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class Buildings : MonoBehaviour
 {
 
@@ -10,8 +10,11 @@ public class Buildings : MonoBehaviour
     [SerializeField]
     GameObject[] spherePrefab;
 
-   
+    [SerializeField]
+    GameObject water;
     GameObject[] _circles = new GameObject[25];
+
+   
     void Start()
     {
         StartCoroutine(buildEnviroment());
@@ -57,10 +60,14 @@ public class Buildings : MonoBehaviour
                 yield return 0;
             }
         }
-        transform.position = new Vector3(0f, 13.5f, transform.position.z);
-        transform.localScale = new Vector3(1.1f, 1.5f, 1f);
+        //13.5f
+        transform.DOMove(new Vector3(0f, 8f, transform.position.z), .5f);
+        //transform.position = new Vector3(0f, 8f, transform.position.z);
+        transform.DOScale(new Vector3(1.1f, 1.5f, 1f), .5f);
 
+        //transform.localScale = new Vector3(1.1f, 1.5f, 1f);
 
+       
 
         yield return null;
     }

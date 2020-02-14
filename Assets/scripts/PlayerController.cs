@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
+
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController _inst;
@@ -139,8 +141,7 @@ public class PlayerController : MonoBehaviour
     void movement(Vector3 move)
     {
        
-        if (rotateTimer > 0f || freezPlayerInput)
-            return;
+     
 
      
 
@@ -151,6 +152,8 @@ public class PlayerController : MonoBehaviour
         }
    
         shadowContainer.transform.position = new Vector3(shadowContainer.transform.position.x, shadowContainer.transform.position.y, shadowZ);
+        if (rotateTimer > 0f || freezPlayerInput)
+            return;
         if (move == lastMoveTarget) return;
         lastMoveTarget = move;
         Vector3 travelDistance = Vector3.zero;
@@ -242,30 +245,29 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(reshape(cubes));
     }
 
- 
-
-
-
     // Player Die & Pass 
     public void onPlayerDie()
     {
         transform.DOShakePosition(.3f, 1.5f, 5, 80f).SetLoops(-1, LoopType.Incremental);
     }
 
-    public void onPlayerPass()
+    public void onPlayerPass(int scorePoint)
     {
         PlayerHeadAnim._inst.playerAnimWhenObstcalePassed();
         var pos = playerShapes[0].transform.position;
         pos.z -= 1.5f;
         var gamObj = Instantiate(pointPrefab, pos, Quaternion.identity, transform);
+
+        var txt = gamObj.GetComponent<TextMeshPro>();
+        txt.text = "+" + scorePoint.ToString();
         gamObj.transform.localScale = new Vector3(2f, 2f, 2f);
         gamObj.transform.DOScale(0f, 2f).SetEase(Ease.Linear);
         gamObj.transform.DOMoveY(pos.y + 5f, 2f).SetEase(Ease.InOutElastic);
-        GameManager._inst.score += 50;
+        GameManager._inst.score += scorePoint;
         GameManager._inst.earthScore += 1;
         Invoke("addScore", 1f);
         Destroy(gamObj, 3f);
-        rotateTimer = .5f;
+        rotateTimer = 1.4f;
     }
     void addScore()
     {

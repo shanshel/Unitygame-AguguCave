@@ -12,10 +12,6 @@ public class ScoreManager : MonoBehaviour
             _inst = this;
         }
     }
-    private void Update()
-    {
-
-    }
   
     public void IncreaseScore()
     {

@@ -274,6 +274,7 @@ MonoBehaviour:
   checkPassContainer: {fileID: 4326389842189744478}
   obstHolePrefab: {fileID: 1786647730674394793, guid: af25b253bb9be704c8b387c92336410d,
     type: 3}
+  earnPoint: 10
   touchCount: 0
   touchCountRequired: 0
 --- !u!1 &4326389842189744478
