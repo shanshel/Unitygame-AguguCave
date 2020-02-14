@@ -17,6 +17,8 @@ MonoBehaviour:
   - Custom
   - Example
   - General
+  - text
   Categories:
   - {fileID: 11400000, guid: b01e98f4801f7124ba39e1dac4debf90, type: 2}
   - {fileID: 11400000, guid: 4df74c242ac1f354fafa266ed2d201dc, type: 2}
+  - {fileID: 11400000, guid: 532fa90946f926944b8d3fde2da50384, type: 2}
