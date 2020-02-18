@@ -21,6 +21,7 @@ public class obstacles : MonoBehaviour
     Vector3 dangerWallScale, passWallScale;
     private void Start()
     {
+
         spawner._inst.activeObstacles.Add(this);
         StartCoroutine(buildObstacle());
     }

@@ -18,11 +18,6 @@ public class spawner : MonoBehaviour
         if (_inst == null)
             _inst = this;
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
 
     public Vector3 getCurrentObstaclePosition ()
@@ -36,7 +31,8 @@ public class spawner : MonoBehaviour
     float starterPlusSpeed = 0f;
     public void SpawnObs()
     {
-       
+        if (!GameManager._inst.isGameStarted || GameManager._inst.gamePlayTime < 2f)
+            return;
         int rand = Random.Range(0, obstclesPattern.Length);
         var obs = Instantiate(obstclesPattern[rand], transform.position, Quaternion.identity);
  
@@ -45,10 +41,10 @@ public class spawner : MonoBehaviour
 
         SoundManager._inst.playSFX(EnumsData.SFXEnum.spawnObst);
    
-        
+      
         if (GameManager._inst.earthScore < 3f)
         {
-            starterPlusSpeed = .5f;
+            starterPlusSpeed = 2f;
         }
         else
         {
@@ -59,19 +55,26 @@ public class spawner : MonoBehaviour
         {
             GameManager._inst.globalScrollSpeed += increaseSpeed + starterPlusSpeed;
         }
-        
+        if (GameManager._inst.globalScrollSpeed == 100f)
+        {
+            GameManager._inst.oldGlobalScrollSpeed += increaseSpeed + starterPlusSpeed;
+
+        }
+
+
     }
 
     public void playerFail()
     {
         if (GameManager._inst.isGameOver) return;
         GameManager._inst.gameOver();
-     
+        activeObstacles.RemoveRange(0, activeObstacles.Count);
     }
 
     public void playerPass(int scorePoint)
     {
         if (GameManager._inst.isGameOver) return;
+        Handheld.Vibrate();
         PlayerController._inst.onPlayerPass(scorePoint);
         GameManager._inst.SpeedOn.Play();
         PostProcessEffect._inst.changeProfile();

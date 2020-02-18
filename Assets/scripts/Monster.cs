@@ -8,7 +8,7 @@ public class Monster : MonoBehaviour
     private Animator _animator;
     Vector3 startScale, startPos;
     // Start is called before the first frame update
-
+    bool isStartSpawning;
     private void Awake()
     {
         _inst = this;
@@ -19,12 +19,12 @@ public class Monster : MonoBehaviour
     {
         startScale = transform.localScale;
         startPos = transform.localPosition;
-        Invoke("Attack", .2f);
+      
     }
 
     public void attackAfter(float time)
     {
-        Invoke("StopSpeedOnPar", .4f);
+        Invoke("StopSpeedOnPar", time);
         Invoke("Attack", time);
     }
 
@@ -32,7 +32,9 @@ public class Monster : MonoBehaviour
     {
 
 
-        
+        playAttackAnimation();
+        spawnObstacle();
+        return;
         float time = 2.5f;
         if (GameManager._inst.earthScore < 3)
         {
@@ -69,6 +71,18 @@ public class Monster : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager._inst.isGameStarted || GameManager._inst.gamePlayTime < 3f)
+        {
+            isStartSpawning = false;
+            return;
+        }
+           
+        if (!isStartSpawning)
+        {
+            isStartSpawning = true;
+            Invoke("Attack", .2f);
+        }
+       
         float scaleY = AudioPeer._audioBandBuffer[0];
         transform.localScale = new Vector3(transform.localScale.x, startScale.y + (scaleY * 1.2f), transform.localScale.z);
         transform.localPosition = new Vector3(startPos.x, startPos.y + (scaleY * 1.2f), startPos.z);

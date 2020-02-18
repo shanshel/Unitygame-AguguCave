@@ -1,50 +1,51 @@
-﻿using System.Collections;
+﻿using Hellmade.Sound;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static EnumsData;
-using Doozy.Engine.Soundy;
+//using Doozy.Engine.Soundy;
 
 public class SoundManager : MonoBehaviour
 {
 
     public AudioClip dashSfx, rotateSfx, passSfx, 
-        spawnObstSfx, monsterLaughSfx, loseSfx;
+        spawnObstSfx, monsterLaughSfx, loseSfx, gainSfx;
 
-    public AudioSource _music;
-    float targetPitch = .4f;
+    public static int dashSfxPrepared, rotateSfxPrepared, passSfxPrepared, spawnObsSfxPrepared, monsterLaughSfxPrepared, loseSfxPrepared, gainSfxPrepared;
     public static SoundManager _inst;
-    bool stopCheckGameOver;
-    public SoundyController _soundy;
+    // public SoundyController _soundy;
 
-    public SoundyManager _test;
+    //public SoundyManager _test;
 
     private void Awake()
     {
         _inst = this;
     }
 
-    private void Update()
-    {
-        if (!stopCheckGameOver && GameManager._inst.isGameOver)
-        {
-            _music.pitch = Mathf.MoveTowards(_music.pitch, targetPitch, Time.deltaTime * .5f);
-            if (_music.pitch == targetPitch)
-            {
-                _music.Stop();
-                stopCheckGameOver = true;
-            }
-        }
-    }
+
+  
     private void Start()
     {
-        Doozy.Engine.Soundy.SoundyManager.Play(passSfx);
+        dashSfxPrepared = EazySoundManager.PrepareSound(dashSfx);
+        rotateSfxPrepared = EazySoundManager.PrepareSound(rotateSfx);
+        passSfxPrepared = EazySoundManager.PrepareSound(passSfx);
+        spawnObsSfxPrepared = EazySoundManager.PrepareSound(spawnObstSfx);
+        monsterLaughSfxPrepared = EazySoundManager.PrepareSound(monsterLaughSfx);
+        loseSfxPrepared = EazySoundManager.PrepareSound(loseSfx);
+        gainSfxPrepared = EazySoundManager.PrepareSound(gainSfx);
+    
+
+
+
+        //Doozy.Engine.Soundy.SoundyManager.Play(passSfx);
 
 
     }
+
     AudioClip getSFX(SFXEnum sfx)
     {
 
-          AudioClip audio = null;
+        AudioClip audio = dashSfx;
 
         switch (sfx)
         {
@@ -66,7 +67,9 @@ public class SoundManager : MonoBehaviour
             case SFXEnum.lose:
                 audio = loseSfx;
                 break;
-      
+            case SFXEnum.gain:
+                audio = gainSfx;
+                break;
         }
 
         return audio;
@@ -76,10 +79,16 @@ public class SoundManager : MonoBehaviour
     public AudioClip playSFX(SFXEnum sfx)
     {
         AudioClip sfxToPlay = getSFX(sfx);
-        
-        Doozy.Engine.Soundy.SoundyManager.Play(sfxToPlay);
+        EazySoundManager.PlayUISound(sfxToPlay);
 
-      
+        if (sfx == SFXEnum.pass)
+        {
+            EazySoundManager.PlayUISound(gainSfx);
+   
+        }
+
+
+
         return sfxToPlay;
     }
     

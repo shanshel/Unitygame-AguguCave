@@ -19,6 +19,7 @@ public class OBstaclePassChecker : MonoBehaviour
      
         if (other.tag == "Player")
         {
+
             _collider.enabled = false;
             _father.touchCount += 1;
         }

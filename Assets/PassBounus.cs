@@ -24,7 +24,6 @@ public class PassBounus : MonoBehaviour
         {
             _collider.enabled = false;
             _father.earnPoint += bounus;
-            Debug.Log("Got bounus" + _father.earnPoint);
         }
 
     }

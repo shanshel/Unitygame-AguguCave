@@ -16,7 +16,9 @@ public class AudioPeer : MonoBehaviour
     float[] _bufferDecrease;
 
     AudioSource _audioSource;
-
+    public AudioSource _music;
+    bool stopCheckGameOver;
+    float targetPitch = .4f;
     private void Awake()
     {
         _samples = new float[512];
@@ -55,6 +57,16 @@ public class AudioPeer : MonoBehaviour
         MakeFreqBandCalc();
         bandBuffer();
         createAudioBand();
+
+        if (!stopCheckGameOver && GameManager._inst.isGameOver)
+        {
+            _music.pitch = Mathf.MoveTowards(_music.pitch, targetPitch, Time.deltaTime * .5f);
+            if (_music.pitch == targetPitch)
+            {
+                _music.Stop();
+                stopCheckGameOver = true;
+            }
+        }
     }
     void GetSpectrumAudioSource()
     {

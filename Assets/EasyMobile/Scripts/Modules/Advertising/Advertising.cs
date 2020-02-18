@@ -950,7 +950,7 @@ namespace EasyMobile
                     customPlacements = new List<AdPlacement>();
                 }
 
-                // Add the Default placement to the loading list. Some networks (e.g. AdMob)
+                // Add the Default placement to the loading list. Some networks
                 // may only allow loading one rewarded ad at a time (subsequent loadings can
                 // only be done if previous ad has been consumed), so we make sure the
                 // Default placement is always loaded first by inserting it at the first index.

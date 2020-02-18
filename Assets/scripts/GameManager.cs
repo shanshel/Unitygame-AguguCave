@@ -4,22 +4,28 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using DG.Tweening;
+using EasyMobile;
 public class GameManager : MonoBehaviour
 {
    
     public ParticleSystem SpeedOn;
     public static GameManager _inst;
-    public TextMeshProUGUI scoreText;
-    public bool isGameOver;
+    public bool isGameOver, isGameStarted, isPassing;
     public float globalScrollSpeed = 1f, oldGlobalScrollSpeed = 1f;
     public float gamePlayTime;
     public GameObject water;
     
     public int score, earthScore;
-
+    private float startGlobalScrollSpeed;
 
     private void Awake()
     {
+        if (_inst != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         _inst = this;
         Application.targetFrameRate = 300;
 
@@ -27,8 +33,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        TinySauce.OnGameStarted();
-        Time.timeScale = 1f;
+
+        startGlobalScrollSpeed = globalScrollSpeed;
+        
         water.transform.DOLocalMoveY(-2.5f, 2f).SetLoops(-1, LoopType.Yoyo);
     }
 
@@ -42,17 +49,38 @@ public class GameManager : MonoBehaviour
     {
         TinySauce.OnGameFinished(score);
 
+        if (score > PlayerPrefs.GetInt("score"))
+        {
+            PlayerPrefs.SetInt("score", score);
+        }
+        EasyMobileProManager.reportScore(score);
+
+
         isGameOver = true;
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.lose, .1f);
         SoundManager._inst.playSFXCorot(EnumsData.SFXEnum.monsterLaugh, .6f);
         Time.timeScale = 0.4f;
         PlayerController._inst.onPlayerDie();
-        Invoke("reloadScene", 2.2f);
+        MasterUI._inst.onGameOver();
+        //Invoke("reloadScene", 2.2f);
+    }
+
+    public void onStartGame()
+    {
+        Time.timeScale = 1f;
+        TinySauce.OnGameStarted();
+        isGameStarted = true;
+        isGameOver = false;
+        globalScrollSpeed = startGlobalScrollSpeed;
+        oldGlobalScrollSpeed = startGlobalScrollSpeed;
+        gamePlayTime = 0f;
+        score = 0;
+        earthScore = 0;
     }
 
     public void reloadScene()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
 

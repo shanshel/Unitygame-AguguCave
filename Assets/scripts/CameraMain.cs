@@ -39,7 +39,7 @@ public class CameraMain : MonoBehaviour
         changeTimer -= Time.deltaTime;
         if (changeTimer > 0f)
         {
-            vcam.m_Lens.FieldOfView = Mathf.MoveTowards(vcam.m_Lens.FieldOfView, fieldOfViewTarget, Time.deltaTime * 200f);
+           // vcam.m_Lens.FieldOfView = Mathf.MoveTowards(vcam.m_Lens.FieldOfView, fieldOfViewTarget, Time.deltaTime * 200f);
         }
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerContainer : MonoBehaviour
 {
-
+    public static bool touched;
     Vector3 mOffset;
     float mZcoor;
     private void OnMouseDrag()
@@ -25,7 +25,6 @@ public class PlayerContainer : MonoBehaviour
 
         if (move.y < -2f)
             move.y = -2f;
-     
         PlayerController._inst.moveTarget = move;
     
 
@@ -33,10 +32,15 @@ public class PlayerContainer : MonoBehaviour
 
     private void OnMouseDown()
     {
+        touched = true;
         mZcoor = Camera.main.WorldToScreenPoint(PlayerController._inst.playerShapes[0].transform.position).z;
         mOffset = PlayerController._inst.playerShapes[0].transform.position - GetMouseWorldPos();
     }
 
+    private void OnMouseUp()
+    {
+        touched = false;
+    }
 
 
     private Vector3 GetMouseWorldPos()

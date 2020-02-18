@@ -14,7 +14,11 @@ public class Buildings : MonoBehaviour
     GameObject water;
     GameObject[] _circles = new GameObject[25];
 
-   
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
     void Start()
     {
         StartCoroutine(buildEnviroment());

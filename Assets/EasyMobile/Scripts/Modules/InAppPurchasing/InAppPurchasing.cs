@@ -971,10 +971,11 @@ namespace EasyMobile
         /// <summary>
         /// Confirms a pending purchase. Use this if you register a <see cref="PrePurchaseProcessing"/>
         /// delegate and return a <see cref="PrePurchaseProcessResult.Suspend"/> in it so that UnityIAP
-        /// won't inform the app of the purchase again.
+        /// won't inform the app of the purchase again. After confirming the purchase, either <see cref="PurchaseCompleted"/>
+        /// or <see cref="PurchaseFailed"/> event will be called according to the input given by the caller.
         /// </summary>
         /// <param name="product">The pending product to confirm.</param>
-        /// <param name="purchaseSuccess">Whether the purchase of this product succeeded or not.</param>
+        /// <param name="purchaseSuccess">If true, <see cref="PurchaseCompleted"/> event will be called, otherwise <see cref="PurchaseFailed"/> event will be called.</param>
         public static void ConfirmPendingPurchase(Product product, bool purchaseSuccess)
         {
             if (sStoreController != null)

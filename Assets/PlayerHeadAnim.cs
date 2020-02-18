@@ -27,7 +27,7 @@ public class PlayerHeadAnim : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
- 
+        if (GameManager._inst.gamePlayTime < 3f) return;
 
         float peer1 = AudioPeer._audioBandBuffer[0];
         float peer2 = AudioPeer._audioBandBuffer[1];

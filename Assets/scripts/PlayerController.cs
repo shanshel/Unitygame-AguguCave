@@ -8,8 +8,6 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController _inst;
     [SerializeField]
-    GameObject playerActionEffectPrefab;
-    [SerializeField]
     public GameObject playerPiecePrefab, shadowPiecePrefab, shadowContainer;
     public List<GameObject> playerShapes = new List<GameObject>();
     private List<Vector3> playerShapePoss = new List<Vector3>();
@@ -17,8 +15,8 @@ public class PlayerController : MonoBehaviour
 
     public GameObject PlayerFirstPiece;
     public GameObject pointPrefab;
-    
-    bool freezPlayerInput = false;
+    public AudioSource _moveAudioSource;
+    //bool freezPlayerInput = false;
 
     float rotateTimer;
 
@@ -113,14 +111,14 @@ public class PlayerController : MonoBehaviour
 
     public void rotation(int forceRotateCount = 1)
     {
+      
         if (rotateTimer > 0f) return;
         rotateTimer = .1f;
         if (forceRotateCount == 0) forceRotateCount = 1;
         var angle = forceRotateCount * 90f;
         SoundManager._inst.playSFX(EnumsData.SFXEnum.rotate);
-        Instantiate(playerActionEffectPrefab, transform);
+
         Vector3 centerPoint = playerShapes[0].transform.position;
-        Handheld.Vibrate();
         for (var i = 0; i < playerShapePoss.Count; i++)
         {
                    
@@ -140,30 +138,53 @@ public class PlayerController : MonoBehaviour
 
     void movement(Vector3 move)
     {
-       
-     
 
-     
+
+
+        
+
 
         float shadowZ = -50f;
         if (spawner._inst.getCurrentObstaclePosition() != Vector3.zero)
         {
             shadowZ = spawner._inst.getCurrentObstaclePosition().z - .5f;
         }
+
    
         shadowContainer.transform.position = new Vector3(shadowContainer.transform.position.x, shadowContainer.transform.position.y, shadowZ);
+       
+        if (GameManager._inst.isPassing)
+        {
+            _moveAudioSource.pitch = Mathf.Lerp(_moveAudioSource.pitch, 2.5f, Time.deltaTime * 60f);
+            //return;
+        }
+
+        if (_moveAudioSource.pitch > 2f)
+        {
+            _moveAudioSource.pitch = 1.5f;
+        }
+
+        /*
         if (rotateTimer > 0f || freezPlayerInput)
             return;
-        if (move == lastMoveTarget) return;
+            */
+        float pitchSpeed = 10f;
+    
+        if (Vector3.Distance(move, lastMoveTarget) < .05f)
+        {
+            _moveAudioSource.pitch = Mathf.Lerp(_moveAudioSource.pitch, 1f, Time.deltaTime * pitchSpeed * 2f);
+            return;
+        }
+        _moveAudioSource.pitch = Mathf.Lerp(_moveAudioSource.pitch, 2f, Time.deltaTime * pitchSpeed);
         lastMoveTarget = move;
         Vector3 travelDistance = Vector3.zero;
-
+        travelDistance = move - playerShapePoss[0];
 
         for (var i = 0; i < playerShapes.Count; i++) 
         {
             if (i == 0)
             {
-                travelDistance = move - playerShapePoss[i];
+                
                 playerShapePoss[i] = move;
                 var pos = playerShapePoss[i];
                 playerShapes[i].transform.position = pos;
@@ -234,14 +255,14 @@ public class PlayerController : MonoBehaviour
         rotation(Random.Range(1, 3));
         yield return new WaitForSeconds(.1f);
 
-        freezPlayerInput = false;
+        //freezPlayerInput = false;
     }
 
 
     public void setPlayerShape(List<GameObject> cubes, GameObject obstcalePiviot)
     {
        
-        freezPlayerInput = true;
+        //freezPlayerInput = true;
         StartCoroutine(reshape(cubes));
     }
 
@@ -255,7 +276,7 @@ public class PlayerController : MonoBehaviour
     {
         PlayerHeadAnim._inst.playerAnimWhenObstcalePassed();
         var pos = playerShapes[0].transform.position;
-        pos.z -= 1.5f;
+        pos.z -= 2.5f;
         var gamObj = Instantiate(pointPrefab, pos, Quaternion.identity, transform);
 
         var txt = gamObj.GetComponent<TextMeshPro>();
@@ -265,13 +286,13 @@ public class PlayerController : MonoBehaviour
         gamObj.transform.DOMoveY(pos.y + 5f, 2f).SetEase(Ease.InOutElastic);
         GameManager._inst.score += scorePoint;
         GameManager._inst.earthScore += 1;
-        Invoke("addScore", 1f);
+        Invoke("updateScoreText", 1.3f);
         Destroy(gamObj, 3f);
         rotateTimer = 1.4f;
     }
-    void addScore()
+    void updateScoreText()
     {
-        GameManager._inst.scoreText.text = GameManager._inst.score.ToString();
+        MasterUI._inst.updateScore();
     }
 
 }
